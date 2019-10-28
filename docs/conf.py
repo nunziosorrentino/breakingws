@@ -12,24 +12,21 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
-package_name = 'splrand'
-package_root = os.path.abspath('..')
-sys.path.insert(0, package_root)
-sys.path.insert(0, os.path.join(package_root, package_name))
+# import os
+# import sys
+# sys.path.insert(0, os.path.abspath('.'))
+
 
 # -- Project information -----------------------------------------------------
 
-project = package_name
-copyright = u'2019, Luca Baldini'
-author = u'Luca Baldini'
+project = 'splrand'
+copyright = '2019, Nunzio Sorrentino'
+author = 'Nunzio Sorrentino'
 
 # The short X.Y version
-from version import __version__
-version = __version__
+version = ''
 # The full version, including alpha/beta/rc tags
-release = __version__
+release = '0.0.1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -42,14 +39,6 @@ release = __version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.napoleon',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -74,7 +63,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path .
-exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -139,8 +128,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'splrand.tex', u'splrand Documentation',
-     u'Luca Baldini', 'manual'),
+    (master_doc, 'splrand.tex', 'splrand Documentation',
+     'Nunzio Sorrentino', 'manual'),
 ]
 
 
@@ -149,7 +138,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'splrand', u'splrand Documentation',
+    (master_doc, 'splrand', 'splrand Documentation',
      [author], 1)
 ]
 
@@ -160,10 +149,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'splrand', u'splrand Documentation',
+    (master_doc, 'splrand', 'splrand Documentation',
      author, 'splrand', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-# -- Extension configuration -------------------------------------------------
