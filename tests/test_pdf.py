@@ -20,20 +20,30 @@ import numpy as np
 
 from splrand.pdf import ProbabilityDensityFunction
 
+def triangular_pdf(xmin=0., xmax=1.):
+    """Triangular function used for testing pdf module.
+    """
+    _x = np.linspace(xmin, xmax, 100)
+    _y = 2./(xmax - xmin)**2. * (_x - xmin)
+    _pdf = ProbabilityDensityFunction(_x, _y)
+    return _pdf
 
 class Testpdf(unittest.TestCase):
 
     """Unit test for pdf module"""
     
     def test_normalization(self, xmin=0., xmax=1.):
-        """Unit test that verify pdf is normalized to one.
+        """Unit test that verifies if the pdf is normalized to one.
         """
-        _x = np.linspace(xmin, xmax, 100)
-        _y = 2./(xmax - xmin)**2. * (_x - xmin)
-        pdf = ProbabilityDensityFunction(_x, _y)
-        norm = pdf.integral(xmin, xmax)
+        norm = triangular_pdf(xmin, xmax).integral(xmin, xmax)
         self.assertAlmostEqual(norm, 1.0)
 
+    def test_cdf(self, xmin=0., xmax=100.):
+        """Unit test that checks cdf properties.
+        """
+        cdf = triangular_pdf(xmin, xmax).cdf
+        self.assertAlmostEqual(cdf(xmin), 0.0)
+        self.assertAlmostEqual(cdf(xmax), 1.0)
 
 if __name__ == '__main__':
     unittest.main()
