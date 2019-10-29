@@ -3,7 +3,11 @@ python:
   - "3.6"      # current default Python on Travis CI
 # command to install dependencies
 install:
-  - pip install -r requirements.txt
+  - pip install -r requirements.txt 
+#enviroment variable for python
+env:
+  - SPLRAND_ROOT = "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  - PYTHONPATH = $SPLRAND_ROOT:$PYTHONPATH
 # command to run tests
 script:
   - pytest
