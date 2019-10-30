@@ -1,6 +1,6 @@
 .. _api:
 
-Example of Program Interface
+PYTHON PACKAGE FOR SPLINE PROBABILITY DENDITY FUCTION GENERATION
 ============================
 
 Core Modules
