@@ -18,7 +18,7 @@
 import unittest
 import numpy as np
 
-from splrand.pdf import ProbabilityDensityFunction
+from breakingws.pdf import ProbabilityDensityFunction
 
 def triangular_pdf(xmin=0., xmax=1.):
     """Triangular function used for testing pdf module.
