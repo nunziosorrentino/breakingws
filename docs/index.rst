@@ -1,4 +1,4 @@
-Welcome to splrand's documentation! 
+Welcome to BreakinGWs's documentation! 
 ===================================
 
 .. toctree::
@@ -20,7 +20,7 @@ Python package with modules for probability density functions generation
 Modules
 -------
 
-.. automodule:: splrand.pdf
+.. automodule:: breakingws.pdf
    :members:
 
 

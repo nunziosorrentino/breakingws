@@ -1,7 +1,7 @@
-splrand
+breakingws
 =======
 
 .. toctree::
    :maxdepth: 4
 
-   splrand
+   breakingws
