@@ -2,11 +2,15 @@ language: python
 python:
   - "3.6"      # current default Python on Travis CI
 # command to install dependencies
-install:
-  - pip install -r requirements.txt 
+#install:
+#  - pip install -r requirements.txt 
 # env variable for python
 before_script:
+  - ./create-env.sh
   - source setup.sh
 # command to run tests
 script:
   - pytest
+# deactivate the environment after the test
+after_script:
+  - deactivate
