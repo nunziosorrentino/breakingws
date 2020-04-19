@@ -17,6 +17,8 @@
 
 import unittest
 import numpy as np
+# this is an import just to test that keras in properly inmported (thus installed)
+import tensorflow.keras as krs
 
 from breakingws.core.pdf import ProbabilityDensityFunction
 
