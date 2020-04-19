@@ -1,21 +1,21 @@
-splrand package
+BreakinGWs package
 ===============
 
 Submodules
 ----------
 
-splrand.pdf module
+breakingws.pdf module
 ------------------
 
-.. automodule:: splrand.pdf
+.. automodule:: breakingws.pdf
     :members:
     :undoc-members:
     :show-inheritance:
 
-splrand.version module
+breakingws.version module
 ----------------------
 
-.. automodule:: splrand.version
+.. automodule:: breakingws.version
     :members:
     :undoc-members:
     :show-inheritance:
@@ -24,7 +24,7 @@ splrand.version module
 Module contents
 ---------------
 
-.. automodule:: splrand
+.. automodule:: breakingws
     :members:
     :undoc-members:
     :show-inheritance:

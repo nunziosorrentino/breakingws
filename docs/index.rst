@@ -17,7 +17,7 @@ Indices and tables
 Python package with modules for probability density functions generation
 ========================================================================
 
-Modules
+Main module
 -------
 
 .. automodule:: breakingws.pdf
