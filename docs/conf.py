@@ -23,8 +23,8 @@ sys.path.insert(0, os.path.join(package_root, package_name))
 # -- Project information -----------------------------------------------------
 
 project = 'breakingws'
-copyright = '2019, Nunzio Sorrentino'
-author = 'Nunzio Sorrentino'
+copyright = '2019, Nunziato Sorrentino'
+author = 'Nunziato Sorrentino'
 
 # The short X.Y version
 version = ''
@@ -144,7 +144,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'breakingws.tex', 'breakingws Documentation',
-     'Nunzio Sorrentino', 'manual'),
+     'Nunziato Sorrentino', 'manual'),
 ]
 
 

@@ -1,11 +1,11 @@
 BreakinGWs package
-===============
+==================
 
 Submodules
 ----------
 
 breakingws.pdf module
-------------------
+---------------------
 
 .. automodule:: breakingws.pdf
     :members:
@@ -13,7 +13,7 @@ breakingws.pdf module
     :show-inheritance:
 
 breakingws.version module
-----------------------
+-------------------------
 
 .. automodule:: breakingws.version
     :members:
