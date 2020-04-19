@@ -4,10 +4,10 @@ BreakinGWs package
 Submodules
 ----------
 
-breakingws.pdf module
+breakingws.core module
 ---------------------
 
-.. automodule:: breakingws.pdf
+.. automodule:: breakingws.core.pdf
     :members:
     :undoc-members:
     :show-inheritance:

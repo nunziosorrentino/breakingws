@@ -20,7 +20,7 @@ Python package with modules for probability density functions generation
 Main module
 -----------
 
-.. automodule:: breakingws.pdf
+.. automodule:: breakingws.core.pdf
    :members:
 
 
