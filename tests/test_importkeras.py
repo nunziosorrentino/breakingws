@@ -32,7 +32,7 @@ class TestKerasInstallation(unittest.TestCase):
     def test_tensorflow_version(self):
         """Unit test that verifies the tensorflow version.
         """
-        self.assertIs(tf_vers, '2.0.1',
+        self.assertEqual(tf_vers, '2.0.1',
             msg='Tensorflow {} is properly installed.'.format(tf_vers))
 
     def test_keras_version(self):
