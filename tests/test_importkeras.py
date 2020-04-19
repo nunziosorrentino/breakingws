@@ -17,7 +17,7 @@
 
 #import packages
 import tensorflow as tf
-import tensorflow.keras as kr
+import tensorflow.keras as krs
 
 #read versions
 tf_vers = tf.__version__
