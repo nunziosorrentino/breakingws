@@ -6,6 +6,7 @@ Welcome to BreakinGWs's documentation!
    :caption: Contents:
 
    modules
+   installation
    breakingws
 
 Indices and tables
