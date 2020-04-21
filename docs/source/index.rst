@@ -5,6 +5,9 @@ Welcome to BreakinGWs's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   modules
+   breakingws
+
 Indices and tables
 ==================
 
@@ -22,5 +25,3 @@ Main module
 
 .. automodule:: breakingws.core.pdf
    :members:
-
-

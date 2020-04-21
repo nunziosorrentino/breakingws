@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-#
 # Configuration file for the Sphinx documentation builder.
 #
-# This file does only contain a selection of the most common options. For a
-# full list see the documentation:
-# http://www.sphinx-doc.org/en/master/config
+# This file only contains a selection of the most common options. For a full
+# list see the documentation:
+# https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 # -- Path setup --------------------------------------------------------------
 
@@ -19,26 +17,21 @@ package_root = os.path.abspath('..')
 sys.path.insert(0, package_root)
 sys.path.insert(0, os.path.join(package_root, package_name))
 
-
 # -- Project information -----------------------------------------------------
 
 project = 'breakingws'
-copyright = '2019, Nunziato Sorrentino'
+copyright = '2020, Nunziato Sorrentino'
 author = 'Nunziato Sorrentino'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-from version import __version__
+from breakingws.version import __version__
 version = __version__
 release = __version__
 
 
 # -- General configuration ---------------------------------------------------
-
-# If your documentation needs a minimal Sphinx version, state it here.
-#
-# needs_sphinx = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -77,12 +70,11 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path .
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = [] #['_build', 'Thumbs.db', '.DS_Store']
 
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
-
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -91,27 +83,10 @@ pygments_style = 'sphinx'
 #
 html_theme = 'alabaster'
 
-# Theme options are theme-specific and customize the look and feel of a theme
-# further.  For a list of options available for each theme, see the
-# documentation.
-#
-# html_theme_options = {}
-
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
-# Custom sidebar templates, must be a dictionary that maps document names
-# to template names.
-#
-# The default sidebars (for documents that don't match any pattern) are
-# defined by theme itself.  Builtin themes are using these templates by
-# default: ``['localtoc.html', 'relations.html', 'sourcelink.html',
-# 'searchbox.html']``.
-#
-# html_sidebars = {}
-
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
