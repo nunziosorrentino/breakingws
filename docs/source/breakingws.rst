@@ -12,15 +12,6 @@ breakingws.core module
     :undoc-members:
     :show-inheritance:
 
-breakingws.version module
--------------------------
-
-.. automodule:: breakingws.version
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
 Module contents
 ---------------
 
