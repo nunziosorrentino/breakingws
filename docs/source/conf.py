@@ -26,7 +26,7 @@ author = 'Nunziato Sorrentino'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-from breakingws.version import __version__
+from version import __version__
 version = __version__
 release = __version__
 
