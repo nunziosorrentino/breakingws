@@ -29,14 +29,32 @@ class ImagesManager:
     for the manipulation of many kind of images.
     """
 
-    def __init__(images, images_id, labels):
+    def __init__(self, images, labels, images_id=''):
         """Image base constructor.
         """
+        assert(isinstance(images_id, str))
         self.images = images
-        self.images_id = images_id
         self.labels = labels
+        self.images_id = [images_id]
+        self._dict_of_imgs = dict(images_id=self.images)
+        self._dict_of_labs = dict(images_id=self.labels)  
+
+    def add_images(self, images, labels, images_id=''):
+        """
+        """
+        self.images = np.concatenate(self.images, images)
+        self.labels = np.concatenate(self.labels, labels)
+        if images_id in self.images_id:
+            self._dict_of_imgs[images_id] = \
+            np.concatenate(self._dict_of_imgs[images_id], images)
+            self._dict_of_labs[images_id] = \
+            np.concatenate(self._dict_of_labs[images_id], labels)
+        else: 
+            self.images_id += [images_id]
+            self._dict_of_imgs[images_id] = images
+            self._dict_of_labs[images_id] = labels
     
-     def __len__(self):
+    def __len__(self):
         """Return the lenght of the array representing the images.
            This is basicaly the total number of images.
         """
@@ -46,10 +64,17 @@ class ImagesManager:
         """This magic method makes class instances iterable over
            the images set.
         """
-        return self.images 
+        return self.images, self.labels
 
-    def __getitem__(self, images_id):
-        return self.images[images_id]
+    def __getitem__(self, images_key):
+        """
+        """
+        if isinstance(images_key, str):
+            return self._dict_of_imgs[images_key], self._dict_of_labs[images_key]
+        if isinstance(images_key, int):
+            return self.images[images_key], self.labels[images_key] 
+        else:
+            raise KeyError("Not acceptable type for {}".format(images_key))
         
 
 
