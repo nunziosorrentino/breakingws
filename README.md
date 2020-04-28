@@ -1,12 +1,34 @@
 # BreakinGWs
-project for cmepda course, developing an efficient convolutuonal neural network for studying the glitchs in gravitational waves detectors. Relative documentation is initialized and up-to-now the package encapsulates a managefull probability density functions module.
+project for cmepda course, developing an efficient convolutuonal neural network for the study of the rapid noise artifacts (i.e. glitches) in gravitational waves detectors. Relative documentation is initialized and up-to-now the package encapsulates a managefull probability density functions module.
 
+**Package build status**
 [![Build Status](https://travis-ci.org/nunziosorrentino/breakingws.svg?branch=master)](https://travis-ci.com/nunziosorrentino/breakingws)
 
+**Documentation status**
 [![Documentation Status](https://readthedocs.org/projects/breakingws/badge/?version=latest)](https://breakingws.readthedocs.io/en/latest/?badge=latest)
 
 ## How do I install BreakinGWs?
 
-In order to properly use BreakinGWs package you can approach one of this two ways:
+BreakinGWs provides an user-friendly configuration of the environment needed for its usage. You should be able to execute what follows:
 
+1. Clone BreakinGWs from its GitHub repository: 
+You can use the HTTPS
+```bash
+git clone https://github.com/nunziosorrentino/breakingws.git
+```
+Or, if you have any public SSH key, you can clone it with:
+```bash
+git clone git@github.com:nunziosorrentino/breakingws.git
+```
+First moving to the next part, be sure to stay in the first *breakingws/* directory. If you have already cloned the package just types:
+```bash
+cd breakingws
+```
+2. Create a Python3 virtual environment:
+In order to give you the best from this package, BreakinGWs must be run on the same Python environment with which has been developed. In order to ensure this, a bash file voted to this purpose
+is the one that reach the right prerequisites. Just type:
+```bash
+./create-env.sh
+```
+If an encouraging message of success comes up, you can go the the next step.
 
