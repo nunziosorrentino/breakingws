@@ -18,11 +18,8 @@ Indices and tables
 
 .. _api:
 
-Python package with modules for probability density functions generation
-========================================================================
-
 Main module
------------
+===========
 
-.. automodule:: breakingws.core.pdf
+.. automodule:: breakingws.datamanage.imagesmanager
    :members:
