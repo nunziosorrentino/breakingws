@@ -15,7 +15,7 @@ Core Modules
 Data Manager Modules
 --------------------
 
-.. automodule:: breakingws.datamanage.imagesmanager
+.. autoclass:: breakingws.datamanage.imagesmanager.ImagesManager
    :members:
     
    .. automethod:: __init__
