@@ -96,8 +96,8 @@ class ImagesManager:
            (use integer). 
         """
         if isinstance(images_key, str):
-            return self._dict_of_imgs[images_key], 
-                   self._dict_of_labs[images_key]
+            return (self._dict_of_imgs[images_key],
+                    self._dict_of_labs[images_key])
         if isinstance(images_key, int):
             return self.images[images_key], self.labels[images_key] 
         else:

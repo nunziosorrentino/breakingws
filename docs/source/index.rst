@@ -27,3 +27,4 @@ Main module
 
 .. automodule:: breakingws.datamanage.imagesmanager
    :members:
+   :noindex:
