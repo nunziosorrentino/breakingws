@@ -19,5 +19,5 @@ provided by your GNU/Linux distribution), then check out your Python version thr
 Then verifies that it is Python3.6!
 
 
-Create and set BreakinGWs environment
--------------------------------------
+Create and set the environment
+------------------------------
