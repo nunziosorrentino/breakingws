@@ -31,8 +31,30 @@ class ImagesManager:
 
     def __init__(self, images, labels, images_id=''):
         """Image base constructor.
+           
+           Arguments
+           ---------
+           images : np.ndarray
+               Set of images encapsulated a single numpy array.
+
+           labels : np.ndarray
+               Labels related coherently to input images in a single
+               numpy array.
+
+           images_id : str
+               Label containing the classification of all input images.
+
+           Examples
+           --------
+           If you have 10 images with 64x64 pixels and 3 channels,
+           the input images must be converted in an array with
+           shape (10, 64, 64, 3).
+
+           If you have 4 labels for each image, these must be cointained 
+           in an array with shape (10, 4).
         """
         assert(isinstance(images_id, str))
+        assert(len(images)==len(labels))
         self.images = images
         self.labels = labels
         self.images_id = [images_id]
@@ -40,7 +62,9 @@ class ImagesManager:
         self._dict_of_labs = dict(images_id=self.labels)  
 
     def add_images(self, images, labels, images_id=''):
-        """
+        """Peculiar method that adds new images and related labels
+           to an existing set. You can also add images with 
+           a new classification .
         """
         self.images = np.concatenate(self.images, images)
         self.labels = np.concatenate(self.labels, labels)
@@ -62,12 +86,13 @@ class ImagesManager:
 
     def __iter__(self):
         """This magic method makes class instances iterable over
-           the images set.
+           the images and labels set.
         """
         return self.images, self.labels
 
     def __getitem__(self, images_key):
-        """
+        """Get the set of images and labels with the same category (use key string)
+           or the single data with their index (use integer). 
         """
         if isinstance(images_key, str):
             return self._dict_of_imgs[images_key], self._dict_of_labs[images_key]

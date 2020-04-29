@@ -7,7 +7,7 @@ project for cmepda course, developing an efficient convolutuonal neural network 
 **Documentation status**
 [![Documentation Status](https://readthedocs.org/projects/breakingws/badge/?version=latest)](https://breakingws.readthedocs.io/en/latest/?badge=latest)
 
-## BreakinGWs installation
+## Installation
 
 BreakinGWs provides an user-friendly configuration of the environment needed for its usage. You should be able to execute what follows:
 

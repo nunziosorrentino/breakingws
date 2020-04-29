@@ -1,21 +1,22 @@
-BreakinGWs package
+breakingws package
 ==================
 
 Submodules
 ----------
 
-breakingws.core module
-----------------------
+breakingws.version module
+-------------------------
 
-.. automodule:: breakingws.core.pdf
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. automodule:: breakingws.version
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------
 
 .. automodule:: breakingws
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

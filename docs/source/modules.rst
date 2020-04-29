@@ -1,4 +1,4 @@
-BreakinGWs
+breakingws
 ==========
 
 .. toctree::
