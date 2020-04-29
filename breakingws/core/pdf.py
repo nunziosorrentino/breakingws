@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Nunzio Sorrentino (nunziato.sorrentinoi@pi.infn.it)
+# Copyright (C) 2019 Nunziato Sorrentino (nunziato.sorrentinoi@pi.infn.it)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,9 +41,6 @@ class ProbabilityDensityFunction(InterpolatedUnivariateSpline):
         InterpolatedUnivariateSpline.__init__(self, x, y)
         ycdf = np.array([self.integral(x[0], xcdf) for xcdf in x])
         self.cdf = InterpolatedUnivariateSpline(x, ycdf)
-        # Need to make sure that the vector I am passing to the ppf spline as
-        # the x values has no duplicates---and need to filter the y
-        # accordingly.
         xppf, ippf = np.unique(ycdf, return_index=True)
         yppf = x[ippf]
         self.ppf = InterpolatedUnivariateSpline(xppf, yppf)

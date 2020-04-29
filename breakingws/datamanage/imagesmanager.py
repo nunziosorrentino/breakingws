@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Nunzio Sorrentino (nunziato.sorrentinoi@pi.infn.it)
+# Copyright (C) 2020 Nunziato Sorrentino (nunziato.sorrentinoi@pi.infn.it)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@ import numpy as np
 
 """
 This is a module containing all you need for a correct images management
-(helpfull storage, user friendly methods for reading/writing and be able 
+(helpfull storage, user friendly methods for reading/writing and be able
 to make easy proper labels)
 
 """
@@ -91,11 +91,13 @@ class ImagesManager:
         return self.images, self.labels
 
     def __getitem__(self, images_key):
-        """Get the set of images and labels with the same category (use key string)
-           or the single data with their index (use integer). 
+        """Get the set of images and labels with the same category
+           (use key string) or the single data with their index 
+           (use integer). 
         """
         if isinstance(images_key, str):
-            return self._dict_of_imgs[images_key], self._dict_of_labs[images_key]
+            return self._dict_of_imgs[images_key], 
+                   self._dict_of_labs[images_key]
         if isinstance(images_key, int):
             return self.images[images_key], self.labels[images_key] 
         else:
