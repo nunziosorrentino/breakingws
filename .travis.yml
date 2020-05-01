@@ -2,12 +2,13 @@ language: python
 python:
   - "3.6"      # current default Python on Travis CI 
 # setting the environment for python
+install:
+  - pip install -r requirements.txt
 before_script:
-  - ./create-env.sh
-  - source setup.sh
+  - SETUP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  - export BREAKINGWS_ROOT=$SETUP_DIR
+  - export PYTHONPATH=$BREAKINGWS_ROOT:$PYTHONPATH
 # command to run tests
 script:
-  - python -m pytest
-# deactivate the environment after the test
-after_script:
-  - deactivate
+  - pytest
+
