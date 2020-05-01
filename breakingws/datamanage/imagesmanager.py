@@ -14,6 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import numpy as np
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 """
 This is a module containing all you need for a correct images management
@@ -78,6 +79,23 @@ class ImagesManager:
             self._dict_of_imgs[images_id] = images
             self._dict_of_labs[images_id] = labels
     
+    @staticmethod 
+    def imgs_generator(inputpath, input_from='directory', datagen=None,
+                       augmentation=False, resize=(241, 288), 
+                       batch_size=64, class_mode='categorical'):
+        """
+        """
+        if augmentation:
+            assert(datagen is not None)
+        else:
+            datagen = ImageDataGenerator()
+            batch_size = 1
+        if input_from=='directory':
+            im_generator = datagen.flow_from_directory(inputpath,
+                              target_size=resize, batch_size=batch_size,
+                              class_mode=class_mode)
+        return im_generator
+    
     def __len__(self):
         """Return the lenght of the array representing the images.
            This is basicaly the total number of images.
@@ -102,6 +120,13 @@ class ImagesManager:
             return self.images[images_key], self.labels[images_key] 
         else:
             raise KeyError("Not acceptable type for {}".format(images_key))
+        
+if __name__=='__main__':
+    import matplotlib.pyplot as plt
+    test_images = ImagesManager.imgs_generator('example_imgs')
+    print(test_images)
+    for im_ in test_images:
+        plt.imshow(im_)
         
 
 
