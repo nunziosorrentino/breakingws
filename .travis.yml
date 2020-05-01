@@ -7,7 +7,7 @@ before_script:
   - source setup.sh
 # command to run tests
 script:
-  - pytest
+  - python -m pytest
 # deactivate the environment after the test
 after_script:
   - deactivate
