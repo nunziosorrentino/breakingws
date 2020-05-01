@@ -125,8 +125,6 @@ if __name__=='__main__':
     import matplotlib.pyplot as plt
     test_images = ImagesManager.imgs_generator('example_imgs')
     print(test_images)
-    for im_ in test_images:
-        plt.imshow(im_)
         
 
 
