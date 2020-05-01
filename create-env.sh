@@ -4,15 +4,28 @@
 current_dir=`pwd`
 parent_dir="$(dirname "$current_dir")"
 
+# Create environment
 venv_dir=${parent_dir}/venv-breakingws-py3
-/usr/bin/python3 -m venv ${venv_dir}
+/usr/bin/python3 -m venv --without-pip ${venv_dir}
+
+# Activate the environment
 echo $venv_dir
 source ${venv_dir}/bin/activate
 
+# Install pip
+curl https://bootstrap.pypa.io/get-pip.py | python
+
+# Check python version and pip list
+deactivate
+source ${venv_dir}/bin/activate
 pip3 install --upgrade pip
+python --version
+pip list
+
+# Intall requirements
 pip3 install -r ${current_dir}/requirements.txt
 deactivate
 
-echo "Virtual environment 'venv-breakingws-py3' created! To setup the package:"
-echo "source setup.sh"
+echo "Virtual environment 'venv-breakingws-py3' created!" 
+echo "To setup the package type 'source setup.sh'."
 
