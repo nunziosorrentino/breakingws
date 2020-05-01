@@ -1,5 +1,4 @@
 numpy
 scipy
 matplotlib
-python-logilab-common
 tensorflow==2.0.1
