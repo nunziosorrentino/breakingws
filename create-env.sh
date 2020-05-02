@@ -20,12 +20,15 @@ deactivate
 source ${venv_dir}/bin/activate
 pip3 install --upgrade pip
 python --version
-pip list
+pip3 list
 
 # Intall requirements
 pip3 install -r ${current_dir}/requirements.txt
 deactivate
 
-echo "Virtual environment 'venv-breakingws-py3' created!" 
+echo
+echo "Virtual environment 'venv-breakingws-py3' created!"
+echo 
 echo "To setup the package type 'source setup.sh'."
+echo
 
