@@ -11,9 +11,15 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+import os
+import glob
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
+from matplotlib.pyplot import imread
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 """
@@ -22,6 +28,24 @@ This is a module containing all you need for a correct images management
 to make easy proper labels)
 
 """
+#resize=(241, 288) 
+def imgs_argument_generator(inputpath, input_frm='directory', 
+                           datagen=ImageDataGenerator(),resize=None, 
+                           batch_size=64, class_mode='categorical'):
+    """
+    
+    """
+    img0_path = os.path.join(inputpath, "*", "*.png")
+    imgs_path_list = glob.glob(img0_path)
+    assert(input_frm in ['directory', 'dataframe', 'hdf5'])
+    if resize is None:
+        img0 = imread(imgs_path_list[0])
+        resize = img0.shape[:2]
+    if input_frm=='directory':
+        im_generator = datagen.flow_from_directory(inputpath,
+                       target_size=resize, batch_size=batch_size,
+                       class_mode=class_mode)
+    return im_generator
 
 class ImagesManager:
 
@@ -79,22 +103,15 @@ class ImagesManager:
             self._dict_of_imgs[images_id] = images
             self._dict_of_labs[images_id] = labels
     
-    @staticmethod 
-    def imgs_generator(inputpath, input_from='directory', datagen=None,
-                       augmentation=False, resize=(241, 288), 
-                       batch_size=64, class_mode='categorical'):
+    @classmethod    
+    def from_directory(cls, dir_path):
         """
+        Warning, here we need labels!!!
         """
-        if augmentation:
-            assert(datagen is not None)
-        else:
-            datagen = ImageDataGenerator()
-            batch_size = 1
-        if input_from=='directory':
-            im_generator = datagen.flow_from_directory(inputpath,
-                              target_size=resize, batch_size=batch_size,
-                              class_mode=class_mode)
-        return im_generator
+        imgs_path = os.path.join(dir_path, "*", "*.png")
+        imgs_path_list = glob.glob(imgs_path)
+        imgs = [imread(i) for i in imgs_path_list]
+        return cls(np.array(imgs), _)
     
     def __len__(self):
         """Return the lenght of the array representing the images.
@@ -123,7 +140,8 @@ class ImagesManager:
         
 if __name__=='__main__':
     import matplotlib.pyplot as plt
-    test_images = ImagesManager.imgs_generator('example_imgs')
+    import matplotlib.image as mpimg
+    test_images = imgs_argument_generator('example_imgs')
     print(test_images)
         
 

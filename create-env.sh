@@ -6,7 +6,7 @@ parent_dir="$(dirname "$current_dir")"
 
 # Create environment
 venv_dir=${parent_dir}/venv-breakingws-py3
-/usr/bin/python3 -m venv --without-pip ${venv_dir}
+/usr/bin/python3 -m venv --upgrade --without-pip ${venv_dir} 
 
 # Activate the environment
 echo $venv_dir
@@ -19,8 +19,6 @@ curl https://bootstrap.pypa.io/get-pip.py | python
 deactivate
 source ${venv_dir}/bin/activate
 pip3 install --upgrade pip
-python --version
-pip3 list
 
 # Intall requirements
 pip3 install -r ${current_dir}/requirements.txt
