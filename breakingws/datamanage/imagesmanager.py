@@ -58,8 +58,8 @@ class ImagesManager:
     def __init__(self, images, images_id=''):
         """Image base constructor.
            
-           Arguments
-           ---------
+           Parameters
+           ----------
            images : np.ndarray, dict
                Set of images encapsulated a single numpy array or in
                a dictionaty with keys equal to labels.
