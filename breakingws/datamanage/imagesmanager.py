@@ -66,7 +66,7 @@ class ImagesManager:
 
            images_id : str
                Label containing the classification of all input images.
-               If 'images' is a dictionaty images_id is not required.
+               If 'images' is a dictionary, images_id is not required.
                
            Attributes
            ----------
@@ -136,7 +136,9 @@ class ImagesManager:
     @classmethod    
     def from_directory(cls, dir_path):
         """
-        
+        This methos enables to collect a 'ImageManager' instance by simply
+        indicating the path to the directory with images divided in labels
+        as subdirectories.
         """
         partents_path = os.path.join(dir_path, "*") 
         p_path_list = glob.glob(partents_path)
