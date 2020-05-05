@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
 from matplotlib.pyplot import imread
+from collections import OrderedDict
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 """
@@ -54,20 +55,18 @@ class ImagesManager:
     for the manipulation of many kind of images.
     """
 
-    def __init__(self, images, labels, images_id=''):
+    def __init__(self, images, images_id=''):
         """Image base constructor.
            
            Arguments
            ---------
-           images : np.ndarray
-               Set of images encapsulated a single numpy array.
-
-           labels : np.ndarray
-               Labels related coherently to input images in a single
-               numpy array.
+           images : np.ndarray, dict
+               Set of images encapsulated a single numpy array or in
+               a dictionaty with keys equal to labels.
 
            images_id : str
                Label containing the classification of all input images.
+               If 'images' is a dictionaty images_id is not required.
 
            Examples
            --------
@@ -75,43 +74,73 @@ class ImagesManager:
            the input images must be converted in an array with
            shape (10, 64, 64, 3).
 
-           If you have 4 labels for each image, these must be cointained 
-           in an array with shape (10, 4).
+           If you have 4 labels for each images set addes, 
+           these will be collected in the attribute 'labels' 
+           with shape (10, 4).
         """
         assert(isinstance(images_id, str))
-        assert(len(images)==len(labels))
-        self.images = images
-        self.labels = labels
-        self.images_id = [images_id]
-        self._dict_of_imgs = dict(images_id=self.images)
-        self._dict_of_labs = dict(images_id=self.labels)  
+        if isinstance(images, np.ndarray):
+            self.images = images
+            self.images_ids = [images_id]
+            self.labels = np.ones((len(self.images), 1), int)
+            self.dict_imgs = dict(images_id=self.images)
+            self.dict_labs = dict(images_id=self.labels) 
+        if isinstance(images, dict):
+            self.dict_imgs = images
+            self.images_ids = list(self.dict_imgs.keys()) 
+            self.images = list(self.dict_imgs.values())
+            label_matrix = np.eye(len(self.images_ids), dtype=int)
+            repeats = [len(k_) for k_ in list(images.values())]
+            self.labels = np.repeat(label_matrix, repeats, axis=0)
+            splits_labs = np.split(self.labels, repeats)
+            splits_labs = np.array([i for i in splits_labs if i.any()])
+            self.dict_labs = dict(zip(list(images.keys()), splits_labs))
 
-    def add_images(self, images, labels, images_id=''):
+    def add_images(self, images, images_id=''):
         """Peculiar method that adds new images and related labels
            to an existing set. You can also add images with 
            a new classification .
         """
-        self.images = np.concatenate(self.images, images)
-        self.labels = np.concatenate(self.labels, labels)
-        if images_id in self.images_id:
-            self._dict_of_imgs[images_id] = \
-            np.concatenate(self._dict_of_imgs[images_id], images)
-            self._dict_of_labs[images_id] = \
-            np.concatenate(self._dict_of_labs[images_id], labels)
+        self.images = np.append(self.images, images, axis=0)
+        if images_id in self.images_ids:
+            self.dict_imgs[images_id] = \
+            np.concatenate(self.dict_imgs[images_id], images)
+            new_labels = [self.labels[0] for i in range(len(images))]
+            self.labels = np.append(self.labels, new_labels, axis=0)
+            self.dict_labs[images_id] = \
+            np.concatenate(self.dict_labs[images_id], new_labels)
         else: 
-            self.images_id += [images_id]
-            self._dict_of_imgs[images_id] = images
-            self._dict_of_labs[images_id] = labels
+            self.images_ids += [images_id]
+            self.dict_imgs[images_id] = images
+            # Preprocess all labels
+            self.labels = \
+            np.c_[self.labels, np.zeros(len(self.labels), int)]
+            for i in list(self.dict_labs.keys()):
+                self.dict_labs[i] = np.c_[self.dict_labs[i], 
+                                    np.zeros(len(self.dict_labs[i]), int)]
+            # Add new labels
+            new_signle_label = np.zeros(len(self.images_ids), int)
+            new_single_label[-1] = 1
+            new_labels = [new_single_label for i in range(len(images))]
+            self.labels = np.append(self.labels, new_labels, axis=0)
+            self.dict_labs[images_id] = new_labels
     
     @classmethod    
     def from_directory(cls, dir_path):
         """
-        Warning, here we need labels!!!
+        
         """
-        imgs_path = os.path.join(dir_path, "*", "*.png")
-        imgs_path_list = glob.glob(imgs_path)
-        imgs = [imread(i) for i in imgs_path_list]
-        return cls(np.array(imgs), _)
+        partents_path = os.path.join(dir_path, "*") 
+        p_path_list = glob.glob(partents_path)
+        imgs_ids = \
+        [p_path_list[i].split('/')[-1] for i in range(len(p_path_list))]
+        imgs_dict = {} 
+        for p_ in p_path_list:
+            ipaths = os.path.join(p_, "*.png")
+            path_list = glob.glob(ipaths)
+            key_label = p_.split('/')[-1]
+            imgs_dict[key_label] = [imread(i) for i in path_list]
+        return cls(imgs_dict)
     
     def __len__(self):
         """Return the lenght of the array representing the images.
@@ -131,8 +160,8 @@ class ImagesManager:
            (use integer). 
         """
         if isinstance(images_key, str):
-            return (self._dict_of_imgs[images_key],
-                    self._dict_of_labs[images_key])
+            return (self.dict_imgs[images_key],
+                    self.dict_labs[images_key])
         if isinstance(images_key, int):
             return self.images[images_key], self.labels[images_key] 
         else:
@@ -141,8 +170,16 @@ class ImagesManager:
 if __name__=='__main__':
     import matplotlib.pyplot as plt
     import matplotlib.image as mpimg
-    test_images = imgs_argument_generator('example_imgs')
-    print(test_images)
+    test_images_g = imgs_argument_generator('example_imgs')
+    print('#############')
+    print(test_images_g)
+    print('#############')
+    test_images = ImagesManager.from_directory('example_imgs')
+    print('AAAAAAAAAAAAA', test_images.images)
+    print('BBBBBBBB', test_images.images_ids)
+    print('CCCCCCCC', test_images.labels)
+    print('DDDDDDDDDDD', test_images.dict_imgs)
+    print('EEEEEEEEE', test_images.dict_labs)
         
 
 
