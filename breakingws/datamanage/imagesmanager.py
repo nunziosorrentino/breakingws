@@ -34,7 +34,8 @@ def imgs_argument_generator(inputpath, input_frm='directory',
                            datagen=ImageDataGenerator(),resize=None, 
                            batch_size=64, class_mode='categorical'):
     """
-    
+    This is a function that collects images in a generator with the option
+    of choosing data augmentation. 
     """
     img0_path = os.path.join(inputpath, "*", "*.png")
     imgs_path_list = glob.glob(img0_path)
@@ -53,38 +54,38 @@ class ImagesManager:
     """
     This is a base class containing some methods and utilities
     for the manipulation of many kind of images.
-    """
+    
+    Parameters
+    ----------
+    images : np.ndarray, dict
+        Set of images encapsulated a single numpy array or in
+        a dictionaty with keys equal to labels.
 
+    images_id : str
+        Label containing the classification of all input images.
+        If 'images' is a dictionary, images_id is not required.
+               
+    Attributes
+    ----------
+    images
+    images_ids 
+    labels 
+    dict_imgs
+    dict_labs 
+
+    Examples
+    --------
+    If you have 10 images with 64x64 pixels and 3 channels,
+    the input images must be converted in an array with
+    shape (10, 64, 64, 3).
+
+    If you have 4 labels for each images set addes, 
+    these will be collected in the attribute 'labels' 
+    with shape (10, 4).
+    """
     def __init__(self, images, images_id=''):
         """Image base constructor.
            
-           Parameters
-           ----------
-           images : np.ndarray, dict
-               Set of images encapsulated a single numpy array or in
-               a dictionaty with keys equal to labels.
-
-           images_id : str
-               Label containing the classification of all input images.
-               If 'images' is a dictionary, images_id is not required.
-               
-           Attributes
-           ----------
-           images
-           images_ids 
-           labels 
-           dict_imgs
-           dict_labs 
-
-           Examples
-           --------
-           If you have 10 images with 64x64 pixels and 3 channels,
-           the input images must be converted in an array with
-           shape (10, 64, 64, 3).
-
-           If you have 4 labels for each images set addes, 
-           these will be collected in the attribute 'labels' 
-           with shape (10, 4).
         """
         assert(isinstance(images_id, str))
         if isinstance(images, np.ndarray):
