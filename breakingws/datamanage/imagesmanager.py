@@ -67,6 +67,14 @@ class ImagesManager:
            images_id : str
                Label containing the classification of all input images.
                If 'images' is a dictionaty images_id is not required.
+               
+           Attributes
+           ----------
+           images
+           images_ids 
+           labels 
+           dict_imgs
+           dict_labs 
 
            Examples
            --------
