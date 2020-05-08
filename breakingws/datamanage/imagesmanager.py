@@ -16,11 +16,8 @@
 import os
 import glob
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 
 from matplotlib.pyplot import imread
-from collections import OrderedDict
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 """
@@ -143,8 +140,6 @@ class ImagesManager:
         """
         partents_path = os.path.join(dir_path, "*") 
         p_path_list = glob.glob(partents_path)
-        imgs_ids = \
-        [p_path_list[i].split('/')[-1] for i in range(len(p_path_list))]
         imgs_dict = {} 
         for p_ in p_path_list:
             ipaths = os.path.join(p_, "*.png")
@@ -179,8 +174,6 @@ class ImagesManager:
             raise KeyError("Not acceptable type for {}".format(images_key))
         
 if __name__=='__main__':
-    import matplotlib.pyplot as plt
-    import matplotlib.image as mpimg
     test_images_g = imgs_argument_generator('example_imgs')
     print('#############')
     print(test_images_g)
