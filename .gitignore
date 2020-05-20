@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Ignore requirements.txt (could be modified modified by create-env)
+requirements.txt
+
 # Ignore Gravity-Spy images (14 Gbyte)
 GravitySpyTrainingSetV1D1/
 
