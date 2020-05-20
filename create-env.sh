@@ -21,6 +21,7 @@ source ${venv_dir}/bin/activate
 pip3 install --upgrade pip
 
 # Intall requirements
+pip3 freeze > requirements.txt
 pip3 install -r ${current_dir}/requirements.txt
 deactivate
 
