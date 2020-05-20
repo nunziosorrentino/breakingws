@@ -1,6 +1,6 @@
 language: python
 python:
-  - "3.5.2"      # current default Python on Travis CI 
+  - "3.5.2"       
 # setting the environment for python
 install:
   - pip install -r requirements.txt
