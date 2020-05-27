@@ -121,7 +121,7 @@ def create_images(nsamples, random=True):
 
 if __name__ == '__main__':
     save = True
-    nsamples = 250
+    nsamples = 100
     data, labels = create_images(nsamples, random=False)
     print('Images dimentions:')
     print(data.shape)
