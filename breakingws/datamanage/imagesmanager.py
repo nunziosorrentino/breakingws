@@ -72,7 +72,6 @@ class ImagesManager:
     images_ids 
     labels 
     dict_imgs
-    dict_labs 
 
     Examples
     --------
@@ -94,7 +93,6 @@ class ImagesManager:
             self.images_ids = [images_id]
             self.labels = np.ones((len(self.images), 1), int)
             self.dict_imgs = dict(images_id=self.images)
-            self.dict_labs = dict(images_id=self.labels) 
         if isinstance(images, dict):
             self.dict_imgs = images
             self.images_ids = list(self.dict_imgs.keys()) 
@@ -102,10 +100,6 @@ class ImagesManager:
             label_matrix = np.eye(len(self.images_ids), dtype=int)
             repeats = [len(k_) for k_ in list(images.values())]
             self.labels = np.repeat(label_matrix, repeats, axis=0)
-            splits_labs = np.split(self.labels, repeats)
-            splits_labs = np.array([i for i in splits_labs if i.any()])
-            self.dict_labs = dict(zip(list(self.images.keys()), 
-                                           splits_labs))
 
     def add_images(self, images, images_id=''):
         """Peculiar method that adds new images and related labels
@@ -118,32 +112,25 @@ class ImagesManager:
             np.concatenate(self.dict_imgs[images_id], images)
             new_labels = [self.labels[0] for i in range(len(images))]
             self.labels = np.append(self.labels, new_labels, axis=0)
-            self.dict_labs[images_id] = \
-            np.concatenate(self.dict_labs[images_id], new_labels)
+
         else: 
             self.images_ids += [images_id]
             self.dict_imgs[images_id] = images
             # Preprocess all labels
             self.labels = \
             np.c_[self.labels, np.zeros(len(self.labels), int)]
-            for i in list(self.dict_labs.keys()):
-                self.dict_labs[i] = np.c_[self.dict_labs[i], 
-                                    np.zeros(len(self.dict_labs[i]), int)]
             # Add new labels
             new_signle_label = np.zeros(len(self.images_ids), int)
             new_single_label[-1] = 1
             new_labels = [new_single_label for i in range(len(images))]
             self.labels = np.append(self.labels, new_labels, axis=0)
-            self.dict_labs[images_id] = new_labels
             
     @staticmethod
     def _create_images_dict(p_list):
         """
         """
-        created = mp.Process()
         current = mp.current_process()
         print('Running:', current.name, current._identity)
-        print('Created:', created.name, created._identity)
         imgs_dict = {}    
         for p_ in p_list:
             ipaths = os.path.join(p_, "*.png")
@@ -157,21 +144,19 @@ class ImagesManager:
                 imgs_dict[key_label] = new_images 
             print(current._identity, ':', len(new_images), 
                                          "images imported!")
-        print(created.name, 'finished!')  
+        print(current.name, 'finished!')  
         return imgs_dict
         
     @staticmethod
     def _pool_handler(iterable, nproc=1):
         """
         """
-        print('Starting', nproc, 'processes for data acquisition!')
-        proc = mp.Pool(processes=nproc)
-        results = proc.map(ImagesManager._create_images_dict, 
-                           iterable)
-        
-        proc.close()
-        proc.join()
-        
+        results = None
+        if __name__=='__main__':
+            print('Starting', nproc, 'processes for data acquisition!')
+            with mp.Pool(processes=nproc) as proc:
+                results = proc.map(ImagesManager._create_images_dict, 
+                                   iterable)
         return results
     
     @classmethod    
@@ -217,10 +202,9 @@ class ImagesManager:
            (use integer). 
         """
         if isinstance(images_key, str):
-            return (self.dict_imgs[images_key],
-                    self.dict_labs[images_key])
+            return self.dict_imgs[images_key]
         if isinstance(images_key, int):
-            return self.images[images_key], self.labels[images_key] 
+            return self.images[images_key] 
         else:
             raise KeyError("Not acceptable type for {}".format(images_key))
         
@@ -235,7 +219,6 @@ if __name__=='__main__':
     print(test_images.labels[0], test_images.labels[100],
           test_images.labels[200], test_images.labels[300])
     print('Imgs keys are:', list(test_images.dict_imgs.keys()))
-    print('Labels keys are:', list(test_images.dict_labs.keys()))
         
 
 
