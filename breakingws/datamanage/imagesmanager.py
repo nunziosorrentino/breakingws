@@ -15,10 +15,14 @@
 
 import os
 import glob
+import logging
+import multiprocessing as mp
 import numpy as np
 
 from matplotlib.pyplot import imread
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+N_CPUS = mp.cpu_count()
 
 """
 This is a module containing all you need for a correct images management
@@ -45,6 +49,26 @@ def imgs_argument_generator(inputpath, input_frm='directory',
                        target_size=resize, batch_size=batch_size,
                        class_mode=class_mode)
     return im_generator
+    
+def create_images_dict(p_list):
+    created = mp.Process()
+    current = mp.current_process()
+    print('Running:', current.name, current._identity)
+    print('Created:', created.name, created._identity)
+    imgs_dict = {}    
+    for p_ in p_list:
+        ipaths = os.path.join(p_, "*.png")
+        path_list = glob.glob(ipaths)
+        key_label = p_.split('/')[-1]
+        new_images = [imread(i) for i in path_list]
+        try:
+            imgs_dict[key_label] = np.append(imgs_dict[key_label], 
+                                             new_images)
+        except KeyError:
+            imgs_dict[key_label] = new_images 
+        print(current._identity, ':', len(new_images), "images imported!")
+    print(created.name, 'finished!')  
+    return imgs_dict
 
 class ImagesManager:
 
@@ -132,21 +156,34 @@ class ImagesManager:
             self.dict_labs[images_id] = new_labels
     
     @classmethod    
-    def from_directory(cls, dir_path):
+    def from_directory(cls, dir_path, nproc=1):
         """
-        This methos enables to collect a 'ImageManager' instance by simply
+        This method enables to collect a 'ImageManager' instance by simply
         indicating the path to the directory with images divided in labels
         as subdirectories.
         """
         partents_path = os.path.join(dir_path, "*") 
         p_path_list = glob.glob(partents_path)
-        imgs_dict = {} 
-        for p_ in p_path_list:
-            ipaths = os.path.join(p_, "*.png")
-            path_list = glob.glob(ipaths)
-            key_label = p_.split('/')[-1]
-            imgs_dict[key_label] = [imread(i) for i in path_list]
-        return cls(imgs_dict)
+
+        n_files = len(p_path_list)
+        splits_list = [n_files//nproc*(i+1) for i in range(nproc-1)]
+        proc_iterable = np.split(p_path_list, splits_list)
+        
+        # Set logger
+        #mp.log_to_stderr()
+        #logger = mp.get_logger()
+        #logger.setLevel(logging.INFO)
+        print('Starting', nproc, 'processes for data acquisition!')
+        proc = mp.Pool(processes=nproc)
+        proc_outputs = proc.map(create_images_dict, proc_iterable)
+        proc.close()
+        proc.join()
+        
+        dict_images = {}
+        for p_o in proc_outputs:
+            dict_images.update(p_o)
+
+        return cls(dict_images)
     
     def __len__(self):
         """Return the lenght of the array representing the images.
@@ -174,16 +211,12 @@ class ImagesManager:
             raise KeyError("Not acceptable type for {}".format(images_key))
         
 if __name__=='__main__':
-    test_images_g = imgs_argument_generator('example_imgs')
-    print('#############')
-    print(test_images_g)
-    print('#############')
-    test_images = ImagesManager.from_directory('example_imgs')
-    print('AAAAAAAAAAAAA', test_images.images)
+    test_images = ImagesManager.from_directory('data', nproc=N_CPUS)
+    #print('AAAAAAAAAAAAA', test_images.images)
     print('BBBBBBBB', test_images.images_ids)
-    print('CCCCCCCC', test_images.labels)
-    print('DDDDDDDDDDD', test_images.dict_imgs)
-    print('EEEEEEEEE', test_images.dict_labs)
+    #print('CCCCCCCC', test_images.labels)
+    #print('DDDDDDDDDDD', test_images.dict_imgs)
+    #print('EEEEEEEEE', test_images.dict_labs)
         
 
 

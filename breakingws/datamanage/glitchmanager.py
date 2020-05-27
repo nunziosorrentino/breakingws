@@ -24,7 +24,7 @@ from matplotlib.pyplot import imread
 
 from breakingws.datamanage.imagesmanager import ImagesManager
 
-N_CPUS = mp.cpu_count() - 1
+N_CPUS = mp.cpu_count() 
 
 def create_images_dict(p_list, duration=2.):
     print('Process running')
@@ -41,7 +41,7 @@ def create_images_dict(p_list, duration=2.):
                                            )
         except KeyError:
             imgs_dict[key_label] = new_images 
-        print(p_list, "images imported!!!")
+        print(len(new_images), "images imported!!!")
     print('Done process!')  
     return imgs_dict
 
@@ -99,8 +99,7 @@ class GlitchManager(ImagesManager):
         
 if __name__=='__main__':
     print('This should be test!!!')
-    #test_images = GlitchManager.from_directory('GravitySpyTrainingSetV1D1',
-    #                                            nproc=N_CPUS)
+    #test_images = GlitchManager.from_directory('data', nproc=N_CPUS)
     #print('AAAAAAAAAAAAA', test_images.images)
     #print('BBBBBBBB', test_images.images_ids)
     #print('CCCCCCCC', test_images.labels)
