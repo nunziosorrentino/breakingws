@@ -176,12 +176,16 @@ class ImagesManager:
         print('Starting', nproc, 'processes for data acquisition!')
         proc = mp.Pool(processes=nproc)
         proc_outputs = proc.map(create_images_dict, proc_iterable)
+        print('Proc. outputs created!')
         proc.close()
+        print('Proc. closed!')
         proc.join()
+        print('DONE!')
         
         dict_images = {}
         for p_o in proc_outputs:
             dict_images.update(p_o)
+        print('ImageManager instance created!')
 
         return cls(dict_images)
     
@@ -213,7 +217,8 @@ class ImagesManager:
 if __name__=='__main__':
     test_images = ImagesManager.from_directory('data', nproc=N_CPUS)
     #print('AAAAAAAAAAAAA', test_images.images)
-    print('BBBBBBBB', test_images.images_ids)
+    print('LABELS:', test_images.images_ids)
+    print('There are', len(test_images), 'images')
     #print('CCCCCCCC', test_images.labels)
     #print('DDDDDDDDDDD', test_images.dict_imgs)
     #print('EEEEEEEEE', test_images.dict_labs)
