@@ -71,11 +71,10 @@ def drawLine(c,x,y,w,h):
     return img
 
 def genLine():
-    im = drawLine(randomColor(),
-                  int(np.random.uniform(300, 500)),
+    im = drawLine(randomColor(), int(np.random.uniform(300, 500)),
                   int(np.random.uniform(200, 400)),
-                  int(np.random.uniform(100, 400)), 
-                  int(np.random.uniform(100, 400)))
+                  int(np.random.uniform(-300, 100)), 
+                  int(np.random.uniform(-200, 200)))
     return im
 
 #usefull calss for labels
@@ -106,7 +105,7 @@ def permutation(n_data):
 # generate data
 
 def create_images(nsamples, random=True):
-    print('Generating {} images!'.format(nsamples))
+    print('Generating {} images!'.format(4*nsamples))
     circs, ellips, rects, lines, c_labels, e_labels, r_labels, l_labels = single_lab_data(nsamples)
     # Now data are splitted into three different sets
     l_ = np.concatenate((c_labels, e_labels, r_labels, l_labels))
@@ -122,9 +121,11 @@ def create_images(nsamples, random=True):
 
 if __name__ == '__main__':
     save = True
-    nsamples = 200
+    nsamples = 250
     data, labels = create_images(nsamples, random=False)
+    print('Images dimentions:')
     print(data.shape)
+    print('Labels dimentions:')
     print(labels.shape)
     #cv2.imshow('image', data[8])
     #cv2.waitKey(0)  
@@ -145,9 +146,13 @@ if __name__ == '__main__':
                                  data[i+2*nsamples])
             status = bool(s*status)
             s = cv2.imwrite(os.path.join('lines/line{}.png'.format(i)), 
-                                 data[1+3*nsamples])
+                                 data[i+3*nsamples])
             status = bool(s*status)
-        print('Did you save the images?', status)
+        print('Did you save the images?')
+        if status:
+            print('Yes!')
+        else:
+            print('No!')
                      
      
                      
