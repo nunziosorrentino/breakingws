@@ -215,10 +215,12 @@ class ImagesManager:
             raise KeyError("Not acceptable type for {}".format(images_key))
         
 if __name__=='__main__':
-    test_images = ImagesManager.from_directory('data', nproc=N_CPUS)
+    from breakingws import BREAKINGWS_DATA
+    test_images = ImagesManager.from_directory(BREAKINGWS_DATA, nproc=N_CPUS)
     #print('AAAAAAAAAAAAA', test_images.images)
     print('LABELS:', test_images.images_ids)
     print('There are', len(test_images), 'images')
+    print('But images is:', test_images.images.shape, 'dimentioned')
     #print('CCCCCCCC', test_images.labels)
     #print('DDDDDDDDDDD', test_images.dict_imgs)
     #print('EEEEEEEEE', test_images.dict_labs)
