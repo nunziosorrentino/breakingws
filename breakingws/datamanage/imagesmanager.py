@@ -49,26 +49,6 @@ def imgs_argument_generator(inputpath, input_frm='directory',
                        target_size=resize, batch_size=batch_size,
                        class_mode=class_mode)
     return im_generator
-    
-def create_images_dict(p_list):
-    created = mp.Process()
-    current = mp.current_process()
-    print('Running:', current.name, current._identity)
-    print('Created:', created.name, created._identity)
-    imgs_dict = {}    
-    for p_ in p_list:
-        ipaths = os.path.join(p_, "*.png")
-        path_list = glob.glob(ipaths)
-        key_label = p_.split('/')[-1]
-        new_images = [imread(i) for i in path_list]
-        try:
-            imgs_dict[key_label] = np.append(imgs_dict[key_label], 
-                                             new_images)
-        except KeyError:
-            imgs_dict[key_label] = new_images 
-        print(current._identity, ':', len(new_images), "images imported!")
-    print(created.name, 'finished!')  
-    return imgs_dict
 
 class ImagesManager:
 
@@ -110,7 +90,7 @@ class ImagesManager:
         """
         assert(isinstance(images_id, str))
         if isinstance(images, np.ndarray):
-            self.images = images
+            self.images = np.array(images)
             self.images_ids = [images_id]
             self.labels = np.ones((len(self.images), 1), int)
             self.dict_imgs = dict(images_id=self.images)
@@ -118,13 +98,14 @@ class ImagesManager:
         if isinstance(images, dict):
             self.dict_imgs = images
             self.images_ids = list(self.dict_imgs.keys()) 
-            self.images = list(self.dict_imgs.values())
+            self.images = np.array(list(self.dict_imgs.values()))
             label_matrix = np.eye(len(self.images_ids), dtype=int)
             repeats = [len(k_) for k_ in list(images.values())]
             self.labels = np.repeat(label_matrix, repeats, axis=0)
             splits_labs = np.split(self.labels, repeats)
             splits_labs = np.array([i for i in splits_labs if i.any()])
-            self.dict_labs = dict(zip(list(images.keys()), splits_labs))
+            self.dict_labs = dict(zip(list(self.images.keys()), 
+                                           splits_labs))
 
     def add_images(self, images, images_id=''):
         """Peculiar method that adds new images and related labels
@@ -154,6 +135,44 @@ class ImagesManager:
             new_labels = [new_single_label for i in range(len(images))]
             self.labels = np.append(self.labels, new_labels, axis=0)
             self.dict_labs[images_id] = new_labels
+            
+    @staticmethod
+    def _create_images_dict(p_list):
+        """
+        """
+        created = mp.Process()
+        current = mp.current_process()
+        print('Running:', current.name, current._identity)
+        print('Created:', created.name, created._identity)
+        imgs_dict = {}    
+        for p_ in p_list:
+            ipaths = os.path.join(p_, "*.png")
+            path_list = glob.glob(ipaths)
+            key_label = p_.split('/')[-1]
+            new_images = [imread(i) for i in path_list]
+            try:
+                imgs_dict[key_label] = np.append(imgs_dict[key_label], 
+                                             new_images)
+            except KeyError:
+                imgs_dict[key_label] = new_images 
+            print(current._identity, ':', len(new_images), 
+                                         "images imported!")
+        print(created.name, 'finished!')  
+        return imgs_dict
+        
+    @staticmethod
+    def _pool_handler(iterable, nproc=1):
+        """
+        """
+        print('Starting', nproc, 'processes for data acquisition!')
+        proc = mp.Pool(processes=nproc)
+        results = proc.map(ImagesManager._create_images_dict, 
+                           iterable)
+        
+        proc.close()
+        proc.join()
+        
+        return results
     
     @classmethod    
     def from_directory(cls, dir_path, nproc=1):
@@ -162,6 +181,7 @@ class ImagesManager:
         indicating the path to the directory with images divided in labels
         as subdirectories.
         """
+        
         partents_path = os.path.join(dir_path, "*") 
         p_path_list = glob.glob(partents_path)
 
@@ -169,23 +189,13 @@ class ImagesManager:
         splits_list = [n_files//nproc*(i+1) for i in range(nproc-1)]
         proc_iterable = np.split(p_path_list, splits_list)
         
-        # Set logger
-        #mp.log_to_stderr()
-        #logger = mp.get_logger()
-        #logger.setLevel(logging.INFO)
-        print('Starting', nproc, 'processes for data acquisition!')
-        proc = mp.Pool(processes=nproc)
-        proc_outputs = proc.map(create_images_dict, proc_iterable)
-        print('Proc. outputs created!')
-        proc.close()
-        print('Proc. closed!')
-        proc.join()
-        print('DONE!')
+        res = cls._pool_handler(proc_iterable, nproc)
         
         dict_images = {}
-        for p_o in proc_outputs:
+        for p_o in res:
             dict_images.update(p_o)
-        print('ImageManager instance created!')
+        
+        print('DONE!')
 
         return cls(dict_images)
     
@@ -193,7 +203,7 @@ class ImagesManager:
         """Return the lenght of the array representing the images.
            This is basicaly the total number of images.
         """
-        return len(self.images)  
+        return self.images.shape[0]*self.images.shape[1]  
 
     def __iter__(self):
         """This magic method makes class instances iterable over
@@ -215,15 +225,17 @@ class ImagesManager:
             raise KeyError("Not acceptable type for {}".format(images_key))
         
 if __name__=='__main__':
-    from breakingws import BREAKINGWS_DATA
-    test_images = ImagesManager.from_directory(BREAKINGWS_DATA, nproc=N_CPUS)
+    #from breakingws import BREAKINGWS_DATA
+    test_images = ImagesManager.from_directory('data', nproc=N_CPUS)
     #print('AAAAAAAAAAAAA', test_images.images)
     print('LABELS:', test_images.images_ids)
     print('There are', len(test_images), 'images')
-    print('But images is:', test_images.images.shape, 'dimentioned')
-    #print('CCCCCCCC', test_images.labels)
-    #print('DDDDDDDDDDD', test_images.dict_imgs)
-    #print('EEEEEEEEE', test_images.dict_labs)
+    print('But images are:', test_images.images.shape, 'dimentioned')
+    print('and labels are:', test_images.labels.shape, 'dimentioned')
+    print(test_images.labels[0], test_images.labels[100],
+          test_images.labels[200], test_images.labels[300])
+    print('Imgs keys are:', list(test_images.dict_imgs.keys()))
+    print('Labels keys are:', list(test_images.dict_labs.keys()))
         
 
 
