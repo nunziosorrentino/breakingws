@@ -27,7 +27,7 @@ class TestGlob(unittest.TestCase):
     def test_look_at(self):
         """
         """
-        print('LOOK', glob.glob(os.path.join('../breakingws/datamanage/data', '*')))
+        print('LOOK', glob.glob(os.path.join('data', '*')))
         print('HERE', os.path.abspath(os.path.dirname(__file__)))
         self.assertTrue(False)
 
