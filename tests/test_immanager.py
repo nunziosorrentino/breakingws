@@ -38,6 +38,7 @@ class TestImages(unittest.TestCase):
         m2=[any([0, 1, 0, 0])==any(i) for i in test_images.labels[100:200]]
         m3=[any([0, 0, 1, 0])==any(i) for i in test_images.labels[200:300]]
         m4=[any([0, 0, 0, 1])==any(i) for i in test_images.labels[300:]]
+        print('QUIIII', test_images.images_ids)
         self.assertTrue(any(m1)) 
         self.assertTrue(any(m2)) 
         self.assertTrue(any(m3)) 
