@@ -30,6 +30,7 @@ class TestImages(unittest.TestCase):
         """Unit test that verifies the correct split of labels 
            between images.
         """
+        print('AAAAAA', BREAKINGWS_DATA_RR)
         test_images = ImagesManager.from_directory(BREAKINGWS_DATA_RR)
         self.assertEqual(list(test_images.dict_imgs.keys()), 
                          test_images.images_ids)
