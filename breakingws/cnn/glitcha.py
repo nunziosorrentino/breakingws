@@ -32,7 +32,7 @@ hidden = Flatten()(hidden)
 hidden = Dense(512, activation='relu')(hidden) #output=512
 hidden = Dropout(0.50)(hidden) #rate=0.25
 
-outputs = Dense(21, activation='softmax')(hidden) 
+outputs = Dense(20, activation='softmax')(hidden) 
 #activation='sigmoid' but softmax is more efficient for multiclass
 model = Model(inputs=inputs, outputs=outputs)
 model.compile(loss='categorical_crossentropy', optimizer='adam',
