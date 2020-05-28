@@ -31,7 +31,7 @@ class TestImages(unittest.TestCase):
            between images.
         """
         print('AAAAAA', BREAKINGWS_DATA_RR)
-        test_images = ImagesManager.from_directory(BREAKINGWS_DATA_RR)
+        test_images = ImagesManager.from_directory('../breakingws/datamanage/data')
         self.assertEqual(list(test_images.dict_imgs.keys()), 
                          test_images.images_ids)
         m1=[any([1, 0, 0, 0])==any(i) for i in test_images.labels[:100]]
