@@ -28,7 +28,7 @@ N_CPUS = mp.cpu_count()
 
 #resize=(483, 578) 
 def glts_argument_generator(inputpath, datagen=ImageDataGenerator(),
-                     resize=None, batch_size=64, class_mode='categorical'):
+                     resize=None, batch_size=32, class_mode='categorical'):
     """
     This is a function that collects glitches spectrograms 
     in a generator with the option of choosing data augmentation. 
