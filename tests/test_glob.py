@@ -29,7 +29,7 @@ class TestGlob(unittest.TestCase):
     def test_look_at(self):
         """
         """
-        print(glob.glob(os.path.join(BREAKINGWS_DATA_RR, '*')))
+        print('LOOK', glob.glob(os.path.join(BREAKINGWS_DATA_RR, '*')))
 
 if __name__ == '__main__':
     unittest.main()
