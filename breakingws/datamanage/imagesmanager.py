@@ -166,8 +166,8 @@ class ImagesManager:
         as subdirectories.
         """
         
-        partents_path = os.path.join(dir_path, "*") 
-        p_path_list = glob.glob(partents_path)
+        parents_path = os.path.join(dir_path, "*") 
+        p_path_list = glob.glob(parents_path)
         
         if nproc is None:
             dict_images = cls._create_images_dict(p_path_list)
@@ -212,6 +212,7 @@ class ImagesManager:
             raise KeyError("Not acceptable type for {}".format(images_key))
         
 if __name__=='__main__':
+    
     test_images = ImagesManager.from_directory('data',
                                                #nproc=N_CPUS
                                                )
