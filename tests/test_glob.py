@@ -18,6 +18,7 @@
 import unittest
 import numpy as np
 import glob
+import os
 
 from breakingws import BREAKINGWS_DATA_RR
 
@@ -28,7 +29,7 @@ class TestGlob(unittest.TestCase):
     def test_look_at(self):
         """
         """
-        print(glob.glob(BREAKINGWS_DATA_RR))
+        print(glob.glob(os.path.join(BREAKINGWS_DATA_RR, '*')))
 
 if __name__ == '__main__':
     unittest.main()
