@@ -30,25 +30,6 @@ This is a module containing all you need for a correct images management
 to make easy proper labels)
 
 """
-#resize=(241, 288) 
-def imgs_argument_generator(inputpath, input_frm='directory', 
-                           datagen=ImageDataGenerator(),resize=None, 
-                           batch_size=64, class_mode='categorical'):
-    """
-    This is a function that collects images in a generator with the option
-    of choosing data augmentation. 
-    """
-    img0_path = os.path.join(inputpath, "*", "*.png")
-    imgs_path_list = glob.glob(img0_path)
-    assert(input_frm in ['directory', 'dataframe', 'hdf5'])
-    if resize is None:
-        img0 = imread(imgs_path_list[0])
-        resize = img0.shape[:2]
-    if input_frm=='directory':
-        im_generator = datagen.flow_from_directory(inputpath,
-                       target_size=resize, batch_size=batch_size,
-                       class_mode=class_mode)
-    return im_generator
 
 class ImagesManager:
 
