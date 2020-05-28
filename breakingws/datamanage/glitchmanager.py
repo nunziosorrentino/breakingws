@@ -20,6 +20,7 @@ import numpy as np
 
 from functools import partial
 from matplotlib.pyplot import imread
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from breakingws.datamanage.imagesmanager import ImagesManager
 

@@ -17,6 +17,11 @@ echo
 export PYTHONPATH=$BREAKINGWS_ROOT:$PYTHONPATH
 echo "PYTHONPATH set to " $PYTHONPATH
 echo
+# Add the bin folder to the $PATH so that we have the executables off hand.
+#
+export PATH=$BREAKINGWS_ROOT/breakingws/bin:$PATH
+echo "PATH set to " $PATH
+echo
 echo "BreakinGWs setup done!"
 echo
 echo "Type 'deactivate' to exit the environment!"
