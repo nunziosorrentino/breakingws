@@ -30,6 +30,7 @@ class TestGlob(unittest.TestCase):
         """
         """
         print('LOOK', glob.glob(os.path.join(BREAKINGWS_DATA_RR, '*')))
+        print('HERE', os.path.abspath(os.path.dirname(__file__)))
         self.assertTrue(False)
 
 if __name__ == '__main__':
