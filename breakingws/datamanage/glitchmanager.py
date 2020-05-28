@@ -15,7 +15,6 @@
 
 import os
 import glob
-import logging
 import multiprocessing as mp
 import numpy as np
 
@@ -26,40 +25,56 @@ from breakingws.datamanage.imagesmanager import ImagesManager
 
 N_CPUS = mp.cpu_count() 
 
-def create_images_dict(p_list, duration=2.):
-    print('Process running')
-    imgs_dict = {}    
-    for p_ in p_list:
-        ipaths = os.path.join(p_, 
-                             "*spectrogram_{:.1f}.png".format(duration))
-        path_list = glob.glob(ipaths)
-        key_label = p_.split('/')[-1]
-        new_images = [imread(i) for i in path_list]
-        try:
-            imgs_dict[key_label] = np.append(
-                                           imgs_dict[key_label], new_images
-                                           )
-        except KeyError:
-            imgs_dict[key_label] = new_images 
-        print(len(new_images), "images imported!!!")
-    print('Done process!')  
-    return imgs_dict
-
 class GlitchManager(ImagesManager):
     """
     This is a manager class completaly dedicated to the preprocessing of 
     spectrograms contained in *Gravity Spy dataset*. This is a project 
-    glitch soectrograms were hand-labeled by citizen scientists.
+    glitch spectrograms were hand-labeled by citizen scientists.
  
     """
     def __init__(self, images, images_id='', duration=2.):
-        """
+        """Constructor.
         """
         ImagesManager.__init__(self, images, images_id)
         self.duration = duration
+    
+    @staticmethod    
+    def _create_glitches_dict(p_list, duration=2.):
+        current = mp.current_process()
+        print('Running:', current.name, current._identity)
+        glts_dict = {}    
+        for p_ in p_list:
+            ipaths = os.path.join(p_, 
+                                "*spectrogram_{:.1f}.png".format(duration))
+            path_list = glob.glob(ipaths)
+            key_label = p_.split('/')[-1]
+            new_glits = [imread(i) for i in path_list]
+            try:
+                glts_dict[key_label] = np.append(
+                                           glts_dict[key_label], new_glits
+                                           )
+            except KeyError:
+                glts_dict[key_label] = new_glits 
+            print(current._identity, ':', 
+                  len(new_glits), "spectrograms imported!!!")
+        print(current.name, 'finished!')  
+        return glts_dict
+        
+    @staticmethod
+    def _pool_handler(iterable, duration=2., nproc=1):
+        """
+        """
+        if __name__=='__main__':
+            print('Starting', nproc, 'processes for data acquisition!')
+            with mp.Pool(processes=nproc) as proc:
+                c_glitches_dict = partial(
+                                       GlitchManager._create_glitches_dict, 
+                                       duration=duration)
+                results = proc.map(c_glitches_dict, iterable)
+        return results    
         
     @classmethod    
-    def from_directory(cls, dir_path, duration=2., nproc=1):
+    def from_directory(cls, dir_path, duration=2., nproc=None):
         """
         This methods enables to collect a 'GlitchManager' instance,
         indicating the path to the directory with images divided in 
@@ -75,35 +90,36 @@ class GlitchManager(ImagesManager):
         
         full_path_list = \
                 [x for x in full_path_list if not x.endswith('.csv')]     
+        
+        if nproc is None:
+            dict_glitches = cls._create_glitches_dict(full_path_list)
+            
+        else:
+            n_files = len(full_path_list)
+            splits_list = [n_files//nproc*(i+1) for i in range(nproc-1)]
+            proc_iterable = np.split(full_path_list, splits_list)
+        
+            res = cls._pool_handler(proc_iterable, duration, nproc)
+        
+            dict_glitches = {}
+            for p_o in res:
+                dict_glitches.update(p_o)
+        
+            print('DONE, using multiprocessing!')
 
-        n_files = len(full_path_list)
-        splits_list = [n_files//nproc*(i+1) for i in range(nproc-1)]
-        proc_iterable = np.split(full_path_list, splits_list)
-        
-        # Set logger
-        mp.log_to_stderr()
-        logger = mp.get_logger()
-        logger.setLevel(logging.INFO)
-        
-        proc = mp.Pool(processes=nproc)
-        c_images_dict=partial(create_images_dict, duration=duration)
-        proc_outputs = proc.map(c_images_dict, proc_iterable)
-        proc.close()
-        proc.join()
-        
-        dict_images = {}
-        for proc in proc_outputs:
-            dict_images.update(proc)
-
-        return cls(dict_images, duration=duration)
+        return cls(dict_glitches, duration=duration)
         
 if __name__=='__main__':
     print('This should be test!!!')
-    #test_images = GlitchManager.from_directory('data', nproc=N_CPUS)
-    #print('AAAAAAAAAAAAA', test_images.images)
-    #print('BBBBBBBB', test_images.images_ids)
-    #print('CCCCCCCC', test_images.labels)
-    #print('DDDDDDDDDDD', test_images.dict_imgs)
-    #print('EEEEEEEEE', test_images.dict_labs)        
+    test_images = GlitchManager.from_directory(
+                                               'GravitySpyTrainingSetV1D1',
+                                                nproc=N_CPUS)
+    print('LABELS:', test_images.images_ids)
+    print('There are', len(test_images), 'images')
+    print('But glitches are:', test_images.images.shape, 'dimentioned')
+    print('and glitches are:', test_images.labels.shape, 'dimentioned')
+    print(test_images.labels[0], test_images.labels[100],
+          test_images.labels[200], test_images.labels[300])
+    print('Glts keys are:', list(test_images.dict_imgs.keys()))       
 
         

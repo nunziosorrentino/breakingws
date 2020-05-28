@@ -75,13 +75,13 @@ class ImagesManager:
 
     Examples
     --------
-    If you have 10 images with 64x64 pixels and 3 channels,
-    the input images must be converted in an array with
-    shape (10, 64, 64, 3).
+    If you have 40 images with 64x64 pixels and 3 channels,
+    with 4 different labels, encapsulated in directory and subdirectories,
+    the input images are converted in an array with
+    shape (4, 10, 64, 64, 3).
 
-    If you have 4 labels for each images set addes, 
-    these will be collected in the attribute 'labels' 
-    with shape (10, 4).
+    Labels will be collected in (40, 4) names will be collected in the list 
+    attribute 'images_id'.
     """
     def __init__(self, images, images_id=''):
         """Image base constructor.
@@ -151,7 +151,6 @@ class ImagesManager:
     def _pool_handler(iterable, nproc=1):
         """
         """
-        results = None
         if __name__=='__main__':
             print('Starting', nproc, 'processes for data acquisition!')
             with mp.Pool(processes=nproc) as proc:
@@ -160,7 +159,7 @@ class ImagesManager:
         return results
     
     @classmethod    
-    def from_directory(cls, dir_path, nproc=1):
+    def from_directory(cls, dir_path, nproc=None):
         """
         This method enables to collect a 'ImageManager' instance by simply
         indicating the path to the directory with images divided in labels
@@ -169,18 +168,22 @@ class ImagesManager:
         
         partents_path = os.path.join(dir_path, "*") 
         p_path_list = glob.glob(partents_path)
-
-        n_files = len(p_path_list)
-        splits_list = [n_files//nproc*(i+1) for i in range(nproc-1)]
-        proc_iterable = np.split(p_path_list, splits_list)
         
-        res = cls._pool_handler(proc_iterable, nproc)
+        if nproc is None:
+            dict_images = cls._create_images_dict(p_path_list)
+            
+        else:
+            n_files = len(p_path_list)
+            splits_list = [n_files//nproc*(i+1) for i in range(nproc-1)]
+            proc_iterable = np.split(p_path_list, splits_list)
         
-        dict_images = {}
-        for p_o in res:
-            dict_images.update(p_o)
+            res = cls._pool_handler(proc_iterable, nproc)
         
-        print('DONE!')
+            dict_images = {}
+            for p_o in res:
+                dict_images.update(p_o)
+        
+            print('DONE, using multiprocessing!')
 
         return cls(dict_images)
     
@@ -209,9 +212,9 @@ class ImagesManager:
             raise KeyError("Not acceptable type for {}".format(images_key))
         
 if __name__=='__main__':
-    #from breakingws import BREAKINGWS_DATA
-    test_images = ImagesManager.from_directory('data', nproc=N_CPUS)
-    #print('AAAAAAAAAAAAA', test_images.images)
+    test_images = ImagesManager.from_directory('data',
+                                               #nproc=N_CPUS
+                                               )
     print('LABELS:', test_images.images_ids)
     print('There are', len(test_images), 'images')
     print('But images are:', test_images.images.shape, 'dimentioned')
