@@ -16,3 +16,4 @@ BREAKINGWS_DATA_R = os.path.relpath(BREAKINGWS_DATA).replace('..',
                                     './breakingws')
 BREAKINGWS_DATA_RR = os.path.relpath(BREAKINGWS_DATA).replace('..',
                                     '../breakingws')
+BREAKINGWS_CNN = os.path.abspath(os.path.join(BREAKINGWS_BASE, 'cnn'))
