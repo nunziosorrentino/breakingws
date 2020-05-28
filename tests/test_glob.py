@@ -20,8 +20,6 @@ import numpy as np
 import glob
 import os
 
-from breakingws import BREAKINGWS_DATA_RR
-
 class TestGlob(unittest.TestCase):
 
     """Unit test for using glob module"""
@@ -29,7 +27,7 @@ class TestGlob(unittest.TestCase):
     def test_look_at(self):
         """
         """
-        print('LOOK', glob.glob(os.path.join(BREAKINGWS_DATA_RR, '*')))
+        print('LOOK', glob.glob(os.path.join('../breakingws/datamanage/data', '*')))
         print('HERE', os.path.abspath(os.path.dirname(__file__)))
         self.assertTrue(False)
 
