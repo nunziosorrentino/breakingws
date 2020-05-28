@@ -22,27 +22,21 @@ import numpy as np
 from breakingws import BREAKINGWS_DATA_RR
 from breakingws.datamanage.imagesmanager import ImagesManager
 
-test_images = ImagesManager.from_directory(BREAKINGWS_DATA_RR)
-
 class TestImages(unittest.TestCase):
 
     """Unit test for imagesmanager module"""
     
-    def test_ids(self):
+    def test_labels(self):
         """Unit test that verifies the correct split of labels 
            between images.
         """
+        test_images = ImagesManager.from_directory(BREAKINGWS_DATA_RR)
         self.assertEqual(list(test_images.dict_imgs.keys()), 
                          test_images.images_ids)
-                       
-    def test_labels(self):
-        """Unit test the correct strasposition of labels.
-        """
         m1=[any([1, 0, 0, 0])==any(i) for i in test_images.labels[:100]]
         m2=[any([0, 1, 0, 0])==any(i) for i in test_images.labels[100:200]]
         m3=[any([0, 0, 1, 0])==any(i) for i in test_images.labels[200:300]]
         m4=[any([0, 0, 0, 1])==any(i) for i in test_images.labels[300:]]
-        print('AAAAAAAAAaa', m1)
         self.assertTrue(any(m1)) 
         self.assertTrue(any(m2)) 
         self.assertTrue(any(m3)) 
