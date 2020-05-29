@@ -18,7 +18,7 @@ import os
 import argparse
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from breakingws.datamanage.glitchmanager import glts_argument_generator
-from breakingws.cnn.glitcha import model
+from breakingws.cnn.glitcha import cnn_model
 
 if __name__=='__main__':
 
@@ -68,7 +68,7 @@ if __name__=='__main__':
     path_to_detector=os.path.join('..', 'datamanage', 
                                  'GravitySpyTrainingSetV1D1',
                                  'TrainingSetImages'+detector)
-    # remenber to add ImageDataGeneretor() with validation_split                              
+    # remember to add ImageDataGeneretor() with validation_split                              
     data_gen = glts_argument_generator(path_to_detector, image_generator,
                                        resize=(483, 578), batch_size=batch)
 

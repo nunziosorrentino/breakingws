@@ -27,8 +27,8 @@ from breakingws.datamanage.imagesmanager import ImagesManager
 N_CPUS = mp.cpu_count() 
 
 #resize=(483, 578) 
-def glts_argument_generator(inputpath, datagen=ImageDataGenerator(),
-                     resize=None, batch_size=32, class_mode='categorical'):
+def glts_argument_generator(inputpath, datagen=ImageDataGenerator(), 
+          dataframe=None, resize=None, batch_size=32, class_mode='categorical'):
     """
     This is a function that collects glitches spectrograms 
     in a generator with the option of choosing data augmentation. 
@@ -38,10 +38,16 @@ def glts_argument_generator(inputpath, datagen=ImageDataGenerator(),
     if resize is None:
         img0 = imread(imgs_path_list[0])
         resize = img0.shape[:2]
-    im_generator = datagen.flow_from_directory(inputpath,
+    if dataframe is None:
+        im_generator = datagen.flow_from_directory(inputpath,
                        target_size=resize, batch_size=batch_size,
                        class_mode=class_mode)
-    return im_generator
+        return im_generator
+    else:
+        im_generator = datagen.flow_from_dataframe(dataframe, input_path,
+                       x_col="id", y_col="label", target_size=resize, 
+                       batch_size=batch_size, class_mode=class_mode)
+        return im_generator    
 
 class GlitchManager(ImagesManager):
     """

@@ -7,36 +7,39 @@ import matplotlib.pyplot as plt
 #imgs_shape = (600,800,4) # checked on personal VM
 # but now we create 3 channel images in order to try the following CNN
 
-inputs = Input(shape=(600,800,4)) 
+def cnn_model(shape, classes=2, dprate=0.25):
 
-# Block 1
-hidden = Conv2D(16,(3,3), activation='relu')(inputs) #fltrs=16
-hidden = Conv2D(32,(3,3), activation='relu')(hidden) #fltrs=32
-hidden = MaxPooling2D((2,2))(hidden)
-hidden = Dropout(0.25)(hidden) #rate=0.25
-# Block 2
-hidden = Conv2D(64,(3,3), activation='relu')(hidden) #fltrs=64
-hidden = MaxPooling2D((2,2))(hidden)  
-hidden = Conv2D(64,(3,3), activation='relu')(hidden) #fltrs=64
-hidden = MaxPooling2D((2,2))(hidden)
-hidden = Dropout(0.25)(hidden) #rate=0.25
+	inputs = Input(shape=shape) 
 
-# Block 3 
-hidden = Conv2D(128,(3,3), activation='relu')(hidden) #fltrs=128
-hidden = MaxPooling2D((2,2))(hidden)
-hidden = Conv2D(128,(3,3), activation='relu')(hidden) #fltrs=128
-hidden = MaxPooling2D((2,2))(hidden)
-hidden = Dropout(0.25)(hidden)
+	# Block 1
+	hidden = Conv2D(16,(3,3), activation='relu')(inputs) #fltrs=16
+	hidden = Conv2D(32,(3,3), activation='relu')(hidden) #fltrs=32
+	hidden = MaxPooling2D((2,2))(hidden)
+	hidden = Dropout(dprate)(hidden) #rate=0.25
+	# Block 2
+	hidden = Conv2D(64,(3,3), activation='relu')(hidden) #fltrs=64
+	hidden = MaxPooling2D((2,2))(hidden)  
+	hidden = Conv2D(64,(3,3), activation='relu')(hidden) #fltrs=64
+	hidden = MaxPooling2D((2,2))(hidden)
+	hidden = Dropout(dprate)(hidden) #rate=0.25
 
-# Block 4
-hidden = Flatten()(hidden)
-hidden = Dense(512, activation='relu')(hidden) #output=512
-hidden = Dropout(0.50)(hidden) #rate=0.25
+	# Block 3 
+	hidden = Conv2D(128,(3,3), activation='relu')(hidden) #fltrs=128
+	hidden = MaxPooling2D((2,2))(hidden)
+	hidden = Conv2D(128,(3,3), activation='relu')(hidden) #fltrs=128
+	hidden = MaxPooling2D((2,2))(hidden)
+	hidden = Dropout(dprate)(hidden)
 
-outputs = Dense(20, activation='softmax')(hidden) 
-#activation='sigmoid' but softmax is more efficient for multiclass
-model = Model(inputs=inputs, outputs=outputs)
-model.compile(loss='categorical_crossentropy', optimizer='adam',
-              metrics=['accuracy'])
+	# Block 4
+	hidden = Flatten()(hidden)
+	hidden = Dense(512, activation='relu')(hidden) #output=512
+	hidden = Dropout(dprate)(hidden) #rate=0.25
 
-model.summary()
+	outputs = Dense(classes, activation='softmax')(hidden) 
+	#activation='sigmoid' but softmax is more efficient for multiclass
+	model = Model(inputs=inputs, outputs=outputs)
+	model.compile(loss='categorical_crossentropy', optimizer='adam',
+                      metrics=['accuracy'])
+
+	model.summary()
+	return model
