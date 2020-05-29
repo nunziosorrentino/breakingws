@@ -34,7 +34,9 @@ if __name__=='__main__':
     parser.add_argument("-d", "--detector", type=str, default='H1', 
                         help=" ")
     parser.add_argument("-b", "--batch", type=int, default=32, 
-                        help=" ")                    
+                        help=" ") 
+    parser.add_argument("-e", "--epochs", type=int, default=25, 
+                        help=" ")                                        
     parser.add_argument("-wc", "--wisecenter", type=bool, default=True, 
                         help=" ")
     parser.add_argument("-zr", "--zoomrange", type=float, default=0.05, 
@@ -44,7 +46,9 @@ if __name__=='__main__':
     parser.add_argument("-hs", "--heightshift", type=int, default=10, 
                         help=" ")
     parser.add_argument("-vs", "--validsplit", type=float, default=0.15, 
-                        help=" ")                                                   
+                        help=" ") 
+    parser.add_argument("-sm", "--savemodel", type=bool, default=False, 
+                        help=" ")                                                                      
 
     options = parser.parse_args()
 
@@ -53,11 +57,13 @@ if __name__=='__main__':
     #modelv = options.modelv
     detector = options.detector
     batch = options.batch
+    epochs = options.epochs
     wise_center = options.wisecenter
     zoom_range = options.zoomrange
     wshift = options.widthshift
     hshift = options.heightshift
     vsplit = options.validsplit
+    save = options.savemodel
     
     shape = (483, 578, 3)
     resize = (483, 578)
@@ -77,13 +83,34 @@ if __name__=='__main__':
     data_gen = glts_augment_generator(path_to_detector, image_generator,
                                        dataframe=path_to_dataframe, 
                                        resize=resize, batch_size=batch)
-    
+    print(type(data_gen))
     if detector=='H1':
         classes = 20
     else:
         classes = 17 
     model = cnn_model(shape, classes=classes)
     model.summary()
+    history = model.fit(data_gen, batch_size=batch, epochs=epochs,
+                        validation_split=vsplit)
+    if save:
+        output = os.path.join('..', 'cnn', 'glitcha'+detector+'.obj')       
+        with open(output, 'wb') as file_h:
+            pickle.dump(model, file_h) 
+        print('Model saved to cnn/glitcha'+detector+'.obj')
+        
+    model.summary()  
+    print(history.history.keys())
+    plt.figure()
+    plt.plot(history.history["loss"])
+    plt.xlabel('Epoch')
+    plt.ylabel('Categorical Crossentropy')
+    
+    plt.figure()
+    plt.plot(history.history["accuracy"])
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy (0-1)')
+    
+    plt.show()                     
 
 
 
