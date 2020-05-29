@@ -21,14 +21,16 @@ import numpy as np
 from functools import partial
 from matplotlib.pyplot import imread
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import pandas as pd
 
 from breakingws.datamanage.imagesmanager import ImagesManager
 
 N_CPUS = mp.cpu_count() 
 
 #resize=(483, 578) 
-def glts_argument_generator(inputpath, datagen=ImageDataGenerator(), 
-          dataframe=None, resize=None, batch_size=32, class_mode='categorical'):
+def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
+                           dataframe=None, resize=None, 
+                           batch_size=32, class_mode='categorical'):
     """
     This is a function that collects glitches spectrograms 
     in a generator with the option of choosing data augmentation. 
@@ -44,7 +46,8 @@ def glts_argument_generator(inputpath, datagen=ImageDataGenerator(),
                        class_mode=class_mode)
         return im_generator
     else:
-        im_generator = datagen.flow_from_dataframe(dataframe, input_path,
+        dataframe = pd.read_csv(dataframe)
+        im_generator = datagen.flow_from_dataframe(dataframe, inputpath,
                        x_col="id", y_col="label", target_size=resize, 
                        batch_size=batch_size, class_mode=class_mode)
         return im_generator    

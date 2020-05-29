@@ -40,6 +40,4 @@ def cnn_model(shape, classes=2, dprate=0.25):
 	model = Model(inputs=inputs, outputs=outputs)
 	model.compile(loss='categorical_crossentropy', optimizer='adam',
                       metrics=['accuracy'])
-
-	model.summary()
 	return model

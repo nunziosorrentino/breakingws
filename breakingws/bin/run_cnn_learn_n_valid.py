@@ -17,7 +17,7 @@
 import os
 import argparse
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from breakingws.datamanage.glitchmanager import glts_argument_generator
+from breakingws.datamanage.glitchmanager import glts_augment_generator
 from breakingws.cnn.glitcha import cnn_model
 
 if __name__=='__main__':
@@ -43,7 +43,7 @@ if __name__=='__main__':
                         help=" ")
     parser.add_argument("-hs", "--heightshift", type=int, default=10, 
                         help=" ")
-    parser.add_argument("-vs", "--validsplit", type=float, default=0.25, 
+    parser.add_argument("-vs", "--validsplit", type=float, default=0.15, 
                         help=" ")                                                   
 
     options = parser.parse_args()
@@ -58,6 +58,9 @@ if __name__=='__main__':
     wshift = options.widthshift
     hshift = options.heightshift
     vsplit = options.validsplit
+    
+    shape = (483, 578, 3)
+    resize = (483, 578)
 
     image_generator = ImageDataGenerator(samplewise_center=wise_center,
                                          zoom_range=zoom_range,
@@ -65,12 +68,22 @@ if __name__=='__main__':
     						             height_shift_range=hshift,
     						             validation_split=vsplit,
                                          )    
-    path_to_detector=os.path.join('..', 'datamanage', 
+    path_to_detector = os.path.join('..', 'datamanage', 
                                  'GravitySpyTrainingSetV1D1',
                                  'TrainingSetImages'+detector)
+    path_to_dataframe = os.path.join(path_to_detector, 
+                   'ds_O1_GravitySpy_'+detector+'_2.0_archive_summary.csv')                         
     # remember to add ImageDataGeneretor() with validation_split                              
-    data_gen = glts_argument_generator(path_to_detector, image_generator,
-                                       resize=(483, 578), batch_size=batch)
+    data_gen = glts_augment_generator(path_to_detector, image_generator,
+                                       dataframe=path_to_dataframe, 
+                                       resize=resize, batch_size=batch)
+    
+    if detector=='H1':
+        classes = 20
+    else:
+        classes = 17 
+    model = cnn_model(shape, classes=classes)
+    model.summary()
 
 
 
