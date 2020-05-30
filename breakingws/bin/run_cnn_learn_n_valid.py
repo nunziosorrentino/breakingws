@@ -80,9 +80,11 @@ if __name__=='__main__':
     path_to_dataframe = os.path.join(path_to_detector, 
                    'ds_O1_GravitySpy_'+detector+'_2.0_archive_summary.csv')                         
     # remember to add ImageDataGeneretor() with validation_split                              
-    data_gen = glts_augment_generator(path_to_detector, image_generator,
+    t_gen, v_gen = glts_augment_generator(path_to_detector, image_generator,
                                        dataframe=path_to_dataframe, 
-                                       resize=resize, batch_size=batch)
+                                       resize=resize, 
+                                       batch_size=batch
+				       )
     print(type(data_gen))
     if detector=='H1':
         classes = 20
@@ -90,8 +92,9 @@ if __name__=='__main__':
         classes = 17 
     model = cnn_model(shape, classes=classes)
     model.summary()
-    history = model.fit(data_gen, batch_size=batch, epochs=epochs,
-                        validation_split=vsplit)
+    history = model.fit(t_gen, steps_per_epoch = t_gen.samples//batch, 
+                   validation_data = v_gen, 
+                   validation_steps = valid_gen.samples//batch,epochs=epochs) 
     if save:
         output = os.path.join('..', 'cnn', 'glitcha'+detector+'.obj')       
         with open(output, 'wb') as file_h:

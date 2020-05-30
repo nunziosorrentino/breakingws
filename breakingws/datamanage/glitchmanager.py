@@ -41,16 +41,22 @@ def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
         img0 = imread(imgs_path_list[0])
         resize = img0.shape[:2]
     if dataframe is None:
-        im_generator = datagen.flow_from_directory(inputpath,
+        train_generator = datagen.flow_from_directory(inputpath,
                        target_size=resize, batch_size=batch_size,
-                       class_mode=class_mode)
-        return im_generator
+                       class_mode=class_mode, subset='training')
+	valid_generator = datagen.flow_from_directory(inputpath,
+                       target_size=resize, batch_size=batch_size,
+                       class_mode=class_mode, subset='validation')
+        return train_generator, valid_generator
     else:
         dataframe = pd.read_csv(dataframe)
-        im_generator = datagen.flow_from_dataframe(dataframe, inputpath,
-                       x_col="id", y_col="label", target_size=resize, 
-                       batch_size=batch_size, class_mode=class_mode)
-        return im_generator    
+        train_generator = datagen.flow_from_dataframe(dataframe, inputpath,
+                          x_col="id", y_col="label", target_size=resize, 
+                 batch_size=batch_size, class_mode=class_mode, subset='training')
+	valid_generator = datagen.flow_from_dataframe(dataframe, inputpath,
+                          x_col="id", y_col="label", target_size=resize, 
+                 batch_size=batch_size, class_mode=class_mode, subset='validation')
+        return train_generator, valid_generator    
 
 class GlitchManager(ImagesManager):
     """
