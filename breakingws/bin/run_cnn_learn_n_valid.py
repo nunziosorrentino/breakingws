@@ -85,7 +85,6 @@ if __name__=='__main__':
                                        resize=resize, 
                                        batch_size=batch
 				       )
-    print(type(data_gen))
     if detector=='H1':
         classes = 20
     else:
@@ -94,7 +93,8 @@ if __name__=='__main__':
     model.summary()
     history = model.fit(t_gen, steps_per_epoch = t_gen.samples//batch, 
                    validation_data = v_gen, 
-                   validation_steps = valid_gen.samples//batch,epochs=epochs) 
+                   validation_steps = v_gen.samples//batch,
+                   epochs=epochs) 
     if save:
         output = os.path.join('..', 'cnn', 'glitcha'+detector+'.obj')       
         with open(output, 'wb') as file_h:

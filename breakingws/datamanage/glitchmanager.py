@@ -44,7 +44,7 @@ def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
         train_generator = datagen.flow_from_directory(inputpath,
                        target_size=resize, batch_size=batch_size,
                        class_mode=class_mode, subset='training')
-	valid_generator = datagen.flow_from_directory(inputpath,
+        valid_generator = datagen.flow_from_directory(inputpath,
                        target_size=resize, batch_size=batch_size,
                        class_mode=class_mode, subset='validation')
         return train_generator, valid_generator
@@ -53,7 +53,7 @@ def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
         train_generator = datagen.flow_from_dataframe(dataframe, inputpath,
                           x_col="id", y_col="label", target_size=resize, 
                  batch_size=batch_size, class_mode=class_mode, subset='training')
-	valid_generator = datagen.flow_from_dataframe(dataframe, inputpath,
+        valid_generator = datagen.flow_from_dataframe(dataframe, inputpath,
                           x_col="id", y_col="label", target_size=resize, 
                  batch_size=batch_size, class_mode=class_mode, subset='validation')
         return train_generator, valid_generator    
