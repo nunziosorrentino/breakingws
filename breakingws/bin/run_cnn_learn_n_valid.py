@@ -16,6 +16,7 @@
 
 import os
 import argparse
+import pickle
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from breakingws.datamanage.glitchmanager import glts_augment_generator
 from breakingws.cnn.glitcha import cnn_model
@@ -48,7 +49,7 @@ if __name__=='__main__':
     parser.add_argument("-vs", "--validsplit", type=float, default=0.15, 
                         help=" ") 
     parser.add_argument("-sm", "--savemodel", type=bool, default=False, 
-                        help=" ")                                                                      
+                        help=" ")                                                                     
 
     options = parser.parse_args()
 
@@ -63,7 +64,7 @@ if __name__=='__main__':
     wshift = options.widthshift
     hshift = options.heightshift
     vsplit = options.validsplit
-    save = options.savemodel
+    savem = options.savemodel
     
     shape = (483, 578, 3)
     resize = (483, 578)
@@ -84,36 +85,36 @@ if __name__=='__main__':
                                        dataframe=path_to_dataframe, 
                                        resize=resize, 
                                        batch_size=batch
-				       )
+				                       )
     if detector=='H1':
         classes = 20
     else:
         classes = 17 
     model = cnn_model(shape, classes=classes)
     model.summary()
-    history = model.fit(t_gen, steps_per_epoch = t_gen.samples//batch, 
-                   validation_data = v_gen, 
-                   validation_steps = v_gen.samples//batch,
-                   epochs=epochs) 
-    if save:
+    #history = model.fit(t_gen, steps_per_epoch = t_gen.samples//batch, 
+    #               validation_data = v_gen, 
+    #               validation_steps = v_gen.samples//batch,
+    #               epochs=epochs)                   
+    if savem:
         output = os.path.join('..', 'cnn', 'glitcha'+detector+'.obj')       
         with open(output, 'wb') as file_h:
             pickle.dump(model, file_h) 
         print('Model saved to cnn/glitcha'+detector+'.obj')
         
-    model.summary()  
-    print(history.history.keys())
-    plt.figure()
-    plt.plot(history.history["loss"])
-    plt.xlabel('Epoch')
-    plt.ylabel('Categorical Crossentropy')
+    #model.summary()  
+    #print(history.history.keys())
+    #plt.figure()
+    #plt.plot(history.history["loss"])
+    #plt.xlabel('Epoch')
+    #plt.ylabel('Categorical Crossentropy')
     
-    plt.figure()
-    plt.plot(history.history["accuracy"])
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy (0-1)')
+    #plt.figure()
+    #plt.plot(history.history["accuracy"])
+    #plt.xlabel('Epoch')
+    #plt.ylabel('Accuracy (0-1)')
     
-    plt.show()                     
+    #plt.show()                     
 
 
 
