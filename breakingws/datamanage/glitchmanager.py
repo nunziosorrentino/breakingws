@@ -28,35 +28,67 @@ from breakingws.datamanage.imagesmanager import ImagesManager
 N_CPUS = mp.cpu_count() 
 
 #resize=(483, 578) 
-def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
-                           dataframe=None, resize=None, 
+def glts_augment_generator(inputpath, datagen=ImageDataGenerator(), 
+                           dataframe=None, resize=(600, 800), seed=1,
                            batch_size=32, class_mode='categorical'):
     """
     This is a function that collects glitches spectrograms 
-    in a generator with the option of choosing data augmentation. 
+    in a generator with the additional functionalities 
+    of data augmentation. 
     """
-    img0_path = os.path.join(inputpath, "*", "*.png")
-    imgs_path_list = glob.glob(img0_path)
-    if resize is None:
-        img0 = imread(imgs_path_list[0])
-        resize = img0.shape[:2]
+    pred_generator = datagen.flow_from_directory(
+                                 directory=os.path.join(inputpath, 'Test'),
+                                 target_size=resize,
+                                 batch_size=1,
+                                 class_mode=None,
+                                 shuffle=False,
+                                 seed=seed,
+                                 subset='validation',
+                                 )
+    if datagen.samplewise_center:
+            datagen.fit(pred_generator, augment=True)
     if dataframe is None:
-        train_generator = datagen.flow_from_directory(inputpath,
-                       target_size=resize, batch_size=batch_size,
-                       class_mode=class_mode, subset='training')
-        valid_generator = datagen.flow_from_directory(inputpath,
-                       target_size=resize, batch_size=batch_size,
-                       class_mode=class_mode, subset='validation')
-        return train_generator, valid_generator
+        train_generator = datagen.flow_from_directory(
+                                  directory=os.path.join(inputpath,
+                                                         'TrainingValid'),
+                                  target_size=resize, 
+                                  batch_size=batch_size, 
+                                  shuffle=True, 
+                                  class_mode=class_mode, 
+                                  subset='training', 
+                                  seed=seed)
+        valid_generator = datagen.flow_from_directory(
+                                  directory=os.path.join(inputpath, 
+                                                         'TrainingValid'),
+                                  target_size=resize, 
+                                  batch_size=batch_size, 
+                                  shuffle=True,
+                                  class_mode=class_mode, 
+                                  subset='validation', 
+                                  seed=seed)
     else:
         dataframe = pd.read_csv(dataframe)
-        train_generator = datagen.flow_from_dataframe(dataframe, inputpath,
-                          x_col="id", y_col="label", target_size=resize, 
-                 batch_size=batch_size, class_mode=class_mode, subset='training')
-        valid_generator = datagen.flow_from_dataframe(dataframe, inputpath,
-                          x_col="id", y_col="label", target_size=resize, 
-                 batch_size=batch_size, class_mode=class_mode, subset='validation')
-        return train_generator, valid_generator    
+        train_generator = datagen.flow_from_dataframe(dataframe, 
+                                  directory=os.path.join(inputpath, 
+                                                       'TrainingValid'),
+                                  x_col="id", y_col="label", 
+                                  target_size=resize,
+                                  shuffle=True, 
+                                  seed=seed, 
+                                  batch_size=batch_size, 
+                                  class_mode=class_mode, 
+                                  subset='training')
+        valid_generator = datagen.flow_from_dataframe(dataframe, 
+                                  directory=os.path.join(inputpath, 
+                                                       'TrainingValid'),
+                                  x_col="id", y_col="label", 
+                                  target_size=resize, 
+                                  shuffle=True,
+                                  seed=seed,
+                                  batch_size=batch_size, 
+                                  class_mode=class_mode, 
+                                  subset='validation')
+    return train_generator, valid_generator, pred_generator    
 
 class GlitchManager(ImagesManager):
     """

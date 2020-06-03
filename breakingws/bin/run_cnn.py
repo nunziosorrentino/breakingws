@@ -17,6 +17,7 @@
 import os
 import argparse
 import pickle
+import pandas as pd
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from breakingws.datamanage.glitchmanager import glts_augment_generator
 from breakingws.cnn.glitcha import cnn_model
@@ -32,13 +33,11 @@ if __name__=='__main__':
     #                    help=" ")   
     #parser.add_argument("-mv", "--modelv", type=int, default=0, 
     #                    help=" ")
-    parser.add_argument("-d", "--detector", type=str, default='H1', 
-                        help=" ")
     parser.add_argument("-b", "--batch", type=int, default=32, 
                         help=" ") 
-    parser.add_argument("-e", "--epochs", type=int, default=25, 
+    parser.add_argument("-e", "--epochs", type=int, default=10, 
                         help=" ")                                        
-    parser.add_argument("-wc", "--wisecenter", type=bool, default=True, 
+    parser.add_argument("-wc", "--wisecenter", type=bool, default=False, 
                         help=" ")
     parser.add_argument("-zr", "--zoomrange", type=float, default=0.05, 
                         help=" ")  
@@ -46,9 +45,11 @@ if __name__=='__main__':
                         help=" ")
     parser.add_argument("-hs", "--heightshift", type=int, default=10, 
                         help=" ")
-    parser.add_argument("-vs", "--validsplit", type=float, default=0.15, 
+    parser.add_argument("-vs", "--validsplit", type=float, default=0.5, 
                         help=" ") 
     parser.add_argument("-sm", "--savemodel", type=bool, default=False, 
+                        help=" ")
+    parser.add_argument("-sp", "--savepredicts", type=bool, default=False, 
                         help=" ")                                                                     
 
     options = parser.parse_args()
@@ -56,7 +57,6 @@ if __name__=='__main__':
     # Import arguments from parser
     #model = options.model
     #modelv = options.modelv
-    detector = options.detector
     batch = options.batch
     epochs = options.epochs
     wise_center = options.wisecenter
@@ -65,6 +65,7 @@ if __name__=='__main__':
     hshift = options.heightshift
     vsplit = options.validsplit
     savem = options.savemodel
+    savepreds = options.savepreds
     
     shape = (483, 578, 3)
     resize = (483, 578)
@@ -75,47 +76,64 @@ if __name__=='__main__':
     						             height_shift_range=hshift,
     						             validation_split=vsplit,
                                          )    
-    path_to_detector = os.path.join('..', 'datamanage', 
-                                 'GravitySpyTrainingSetV1D1',
-                                 'TrainingSetImages'+detector)
-    path_to_dataframe = os.path.join(path_to_detector, 
-                   'ds_O1_GravitySpy_'+detector+'_2.0_archive_summary.csv')                         
+    path_to_dataset = os.path.join('..', 'datamanage', 
+                                    'GravitySpyTrainingSetV1D1')
+    path_to_dataframe = os.path.join(path_to_dataset, 
+                                'ds_O1_GravitySpy_2.0_archive_summary.csv')                         
     # remember to add ImageDataGeneretor() with validation_split                              
-    t_gen, v_gen = glts_augment_generator(path_to_detector, image_generator,
-                                       dataframe=path_to_dataframe, 
-                                       resize=resize, 
-                                       batch_size=batch
-				                       )
-    if detector=='H1':
-        classes = 20
-    else:
-        classes = 17 
+    t_gen, v_gen, p_gen = glts_augment_generator(path_to_dataset,
+                                          image_generator,
+                                          dataframe=path_to_dataframe, 
+                                          resize=resize, 
+                                          batch_size=batch
+				                          )
+    classes = len(t_gen.class_names)
     model = cnn_model(shape, classes=classes)
     model.summary()
-    #history = model.fit(t_gen, steps_per_epoch = t_gen.samples//batch, 
-    #               validation_data = v_gen, 
-    #               validation_steps = v_gen.samples//batch,
-    #               epochs=epochs)                   
+    history = model.fit(t_gen, steps_per_epoch = t_gen.samples//batch, 
+                   validation_data = v_gen, 
+                   validation_steps = v_gen.samples//batch,
+                   epochs=epochs)  
+                   
+    test_results = model.evaluate(v_gen, steps=v_gen.n//v_gen.batch_size)
+    print('test loss and accuracy:', test_results)
+                   
     if savem:
-        output = os.path.join('..', 'cnn', 'glitcha'+detector+'.obj')       
-        with open(output, 'wb') as file_h:
-            pickle.dump(model, file_h) 
-        print('Model saved to cnn/glitcha'+detector+'.obj')
+        model.save_weights(os.path.join('..', 'cnn', 'glitcha0.1.h5'))
+        print('Saved model to {}'.format(os.path.join('breakingws', 'cnn',
+                                                      'glitcha0.1.h5')))                 
         
-    #model.summary()  
-    #print(history.history.keys())
-    #plt.figure()
-    #plt.plot(history.history["loss"])
-    #plt.xlabel('Epoch')
-    #plt.ylabel('Categorical Crossentropy')
+    model.summary()  
+    print(history.history.keys())
+    plt.figure()
+    plt.plot(history.history["loss"])
+    plt.plot(history.history["val_loss"])
+    plt.xlabel('Epoch')
+    plt.ylabel('Categorical Crossentropy')
     
-    #plt.figure()
-    #plt.plot(history.history["accuracy"])
-    #plt.xlabel('Epoch')
-    #plt.ylabel('Accuracy (0-1)')
+    plt.figure()
+    plt.plot(history.history["accuracy"])
+    plt.plot(history.history["val_accuracy"])
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy (0-1)')
     
-    #plt.show()                     
-
+    plt.show()   
+    
+    if savepreds:
+        p_gen.reset()
+        pred=model.predict(p_gen, steps=p_gen.n//p_gen.batch_size, 
+                             verbose=1)
+        # here there are the predicted labels (the probabilities)
+        predicted_class_indices=np.argmax(pred,axis=1)   
+        labels = (t_gen.class_indices)
+        labels = dict((v,k) for k,v in labels.items())
+        predictions = [labels[k] for k in predicted_class_indices]              
+        # save results in a csv file
+        filenames=p_gen.filenames
+        results=pd.DataFrame({"Filename":filenames,
+                              "Predictions":predictions})
+        results.to_csv(os.path.join('..', 'cnn','results_glitcha0.1.csv'),
+                       cindex=False)
 
 
 
