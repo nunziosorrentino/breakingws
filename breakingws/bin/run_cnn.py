@@ -63,7 +63,7 @@ if __name__=='__main__':
                         help=" ")
     parser.add_argument("-sp", "--savepreds", type=bool, default=False, 
                         help=" ")    
-    parser.add_argument("-os", "--outputsuffix", type=str, 
+    parser.add_argument("-os", "--outputname", type=str, 
                         default='results', help=" ")                                                                                     
 
     options = parser.parse_args()
@@ -83,7 +83,7 @@ if __name__=='__main__':
     vsplit = options.validsplit
     savem = options.savemodel
     savepreds = options.savepreds
-    outputsuffix = options.outputsuffix
+    outputname = options.outputname
     
     shape = (shape[0], shape[1], 3)
     resize = shape
@@ -148,7 +148,14 @@ if __name__=='__main__':
     
     if savepreds:
         print('Make predictions on {} samples.'.format(p_gen.n))
-        output_csvfile = os.path.join('..', 'cnn', 'results', 
+        if wise_center:
+            output_csvfile = os.path.join('..', 'cnn', 
+                        '{}_{}_{}epochs_aug_{}batches_{}dprate.csv'.format(
+                            outputname, model_name, epochs, batch, dprate)) 
+        if not wise_center:
+            output_csvfile = os.path.join('..', 'cnn', 
+                     '{}_{}_{}epochs_no-aug_{}batches_{}dprate.csv'.format(
+                            outputname, model_name, epochs, batch, dprate))                            
         p_gen.reset()
         pred=model.predict(p_gen, steps=p_gen.n//p_gen.batch_size, 
                              verbose=1)
