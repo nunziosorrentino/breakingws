@@ -20,7 +20,11 @@ import pandas as pd
 import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from breakingws.datamanage.glitchmanager import glts_augment_generator
-from breakingws.cnn.glitcha import cnn_model
+from breakingws.cnn.glitcha import glitcha_model
+from breakingws.cnn.imma import imma_model
+
+cnn_models = dict(glitcha=glitcha_model,
+                  imma=imma_model)
 
 if __name__=='__main__':
 
@@ -29,10 +33,18 @@ if __name__=='__main__':
     """
     parser = argparse.ArgumentParser(description=desc,
                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    #parser.add_argument("-m", "--model", required=True, type=str, 
-    #                    help=" ")   
-    #parser.add_argument("-mv", "--modelv", type=int, default=0, 
-    #                    help=" ")
+    parser.add_argument("-m", "--model", required=True, type=str, 
+                        help=" ")   
+    parser.add_argument("-r", "--dprate", default=0.25, type=float, 
+                        help=" ")
+    parser.add_argument("-s", "--shape", default=(600, 800), type=tuple,
+                        help= " ")
+    parser.add_argument("-id", "--inputdir", type=str, 
+                        default='data', 
+                        help=" ")  
+    parser.add_argument("-df", "--dframe", type=str, 
+                        default=None, 
+                        help=" ")                                                             
     parser.add_argument("-b", "--batch", type=int, default=32, 
                         help=" ") 
     parser.add_argument("-e", "--epochs", type=int, default=10, 
@@ -49,16 +61,19 @@ if __name__=='__main__':
                         help=" ") 
     parser.add_argument("-sm", "--savemodel", type=bool, default=False, 
                         help=" ")
-    parser.add_argument("-sp", "--savepredicts", type=bool, default=False, 
+    parser.add_argument("-sp", "--savepreds", type=bool, default=False, 
                         help=" ")    
-    parser.add_argument("-od", "--outputdir", type=str, 
-                        default=os.path.join('..', 'cnn'), help=" ")                                                                                     
+    parser.add_argument("-os", "--outputsuffix", type=str, 
+                        default='results', help=" ")                                                                                     
 
     options = parser.parse_args()
 
     # Import arguments from parser
-    #model = options.model
-    #modelv = options.modelv
+    model_name = options.model
+    dprate = options.dprate
+    shape = options.shape
+    inputdir = options.inputdir
+    dframe = options.dframe
     batch = options.batch
     epochs = options.epochs
     wise_center = options.wisecenter
@@ -68,21 +83,26 @@ if __name__=='__main__':
     vsplit = options.validsplit
     savem = options.savemodel
     savepreds = options.savepreds
-    outputdir = options.outputdir
+    outputsuffix = options.outputsuffix
     
-    shape = (483, 578, 3)
-    resize = (483, 578)
+    shape = (shape[0], shape[1], 3)
+    resize = shape
 
     image_generator = ImageDataGenerator(samplewise_center=wise_center,
                                          zoom_range=zoom_range,
 							             width_shift_range=wshift,
     						             height_shift_range=hshift,
     						             validation_split=vsplit,
-                                         )    
-    path_to_dataset = os.path.join('..', 'datamanage', 
-                                    'GravitySpyTrainingSetV1D1')
-    path_to_dataframe = os.path.join(path_to_dataset, 
-                                'ds_O1_GravitySpy_2.0_archive_summary.csv')                         
+                                         )  
+    path_to_dataset = os.path.join('..', 'datamanage', inputdir)                                       
+    #path_to_dataset = os.path.join('..', 'datamanage', 
+    #                                'GravitySpyTrainingSetV1D1')
+    if dframe is not None:
+        path_to_dataframe = os.path.join(path_to_dataset, dframe)
+    else:
+        path_to_dataframe = dframe        
+    #path_to_dataframe = os.path.join(path_to_dataset, 
+    #                            'ds_O1_GravitySpy_2.0_archive_summary.csv')                         
     # Make data augmentation                             
     t_gen, v_gen, p_gen = glts_augment_generator(path_to_dataset,
                                           image_generator,
@@ -91,7 +111,7 @@ if __name__=='__main__':
                                           batch_size=batch
 				                          )
     classes = len(t_gen.class_indices)
-    model = cnn_model(shape, classes=classes)
+    model = cnn_models[model_name](shape, classes, dprate)
     model.summary()
     history = model.fit(t_gen, steps_per_epoch = t_gen.samples//batch, 
                    validation_data = v_gen, 
@@ -102,7 +122,9 @@ if __name__=='__main__':
     print('test loss and accuracy:', test_results)
                    
     if savem:
-        model.save_weights(os.path.join('..', 'cnn', 'glitcha0.1.h5'))
+        model_output = os.path.join('..', 'cnn', 'results')
+        model.save_weights(os.path.join(model_output, 
+                           '{}weights.h5'.format(model_name)))
         print('Saved model to {}'.format(os.path.join('breakingws', 'cnn',
                                                       'glitcha0.1.h5')))                 
         
@@ -126,7 +148,7 @@ if __name__=='__main__':
     
     if savepreds:
         print('Make predictions on {} samples.'.format(p_gen.n))
-        output_csvfile = os.path.join(outputdir,'results.csv')
+        output_csvfile = os.path.join('..', 'cnn', 'results', 
         p_gen.reset()
         pred=model.predict(p_gen, steps=p_gen.n//p_gen.batch_size, 
                              verbose=1)
