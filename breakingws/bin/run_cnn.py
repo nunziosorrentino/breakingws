@@ -16,8 +16,8 @@
 
 import os
 import argparse
-import pickle
 import pandas as pd
+import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from breakingws.datamanage.glitchmanager import glts_augment_generator
 from breakingws.cnn.glitcha import cnn_model
@@ -50,7 +50,9 @@ if __name__=='__main__':
     parser.add_argument("-sm", "--savemodel", type=bool, default=False, 
                         help=" ")
     parser.add_argument("-sp", "--savepredicts", type=bool, default=False, 
-                        help=" ")                                                                     
+                        help=" ")    
+    parser.add_argument("-od", "--outputdir", type=str, 
+                        default=os.path.join('..', 'cnn'), help=" ")                                                                                     
 
     options = parser.parse_args()
 
@@ -66,6 +68,7 @@ if __name__=='__main__':
     vsplit = options.validsplit
     savem = options.savemodel
     savepreds = options.savepreds
+    outputdir = options.outputdir
     
     shape = (483, 578, 3)
     resize = (483, 578)
@@ -80,14 +83,14 @@ if __name__=='__main__':
                                     'GravitySpyTrainingSetV1D1')
     path_to_dataframe = os.path.join(path_to_dataset, 
                                 'ds_O1_GravitySpy_2.0_archive_summary.csv')                         
-    # remember to add ImageDataGeneretor() with validation_split                              
+    # Make data augmentation                             
     t_gen, v_gen, p_gen = glts_augment_generator(path_to_dataset,
                                           image_generator,
                                           dataframe=path_to_dataframe, 
                                           resize=resize, 
                                           batch_size=batch
 				                          )
-    classes = len(t_gen.class_names)
+    classes = len(t_gen.class_indices)
     model = cnn_model(shape, classes=classes)
     model.summary()
     history = model.fit(t_gen, steps_per_epoch = t_gen.samples//batch, 
@@ -106,20 +109,24 @@ if __name__=='__main__':
     model.summary()  
     print(history.history.keys())
     plt.figure()
-    plt.plot(history.history["loss"])
-    plt.plot(history.history["val_loss"])
+    plt.plot(history.history["loss"], label="loss")
+    plt.plot(history.history["val_loss"], label="val_loss")
+    plt.legend()
     plt.xlabel('Epoch')
     plt.ylabel('Categorical Crossentropy')
     
     plt.figure()
-    plt.plot(history.history["accuracy"])
-    plt.plot(history.history["val_accuracy"])
+    plt.plot(history.history["accuracy"], label="accuracy")
+    plt.plot(history.history["val_accuracy"], label="val_accuracy")
+    plt.legend()
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy (0-1)')
     
     plt.show()   
     
     if savepreds:
+        print('Make predictions on {} samples.'.format(p_gen.n))
+        output_csvfile = os.path.join(outputdir,'results.csv')
         p_gen.reset()
         pred=model.predict(p_gen, steps=p_gen.n//p_gen.batch_size, 
                              verbose=1)
@@ -130,10 +137,15 @@ if __name__=='__main__':
         predictions = [labels[k] for k in predicted_class_indices]              
         # save results in a csv file
         filenames=p_gen.filenames
+        predicted_prob  = np.max(pred, axis=1)
+        n_class = len(predicted_prob[np.array(predicted_prob) > 0.7])
+        print('{} images are well classified (over 70%)'.format(n_class))
+        print('Thus the {:4f}%'.format((n_class/3779)*100))
         results=pd.DataFrame({"Filename":filenames,
-                              "Predictions":predictions})
-        results.to_csv(os.path.join('..', 'cnn','results_glitcha0.1.csv'),
-                       cindex=False)
+                              "Predictions":predictions,
+                              "Probability(%)":predicted_prob*100})
+        results.to_csv(output_csvfile, index=False)
+        print('Results saved in {}!'.format(output_csvfile))                      
 
 
 

@@ -16,38 +16,54 @@
 import os
 import glob
 import multiprocessing as mp
+import matplotlib.image as mpimg
+import pandas as pd
 import numpy as np
 
 from functools import partial
-from matplotlib.pyplot import imread
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-import pandas as pd
-
 from breakingws.datamanage.imagesmanager import ImagesManager
 
 N_CPUS = mp.cpu_count() 
 
 #resize=(483, 578) 
+
 def glts_augment_generator(inputpath, datagen=ImageDataGenerator(), 
                            dataframe=None, resize=(600, 800), seed=1,
                            batch_size=32, class_mode='categorical'):
     """
     This is a function that collects glitches spectrograms 
-    in a generator with the additional functionalities 
-    of data augmentation. 
+    in three different generators (training, validation and test) 
+    with the option of choosing data augmentation. 
     """
-    pred_generator = datagen.flow_from_directory(
-                                 directory=os.path.join(inputpath, 'Test'),
-                                 target_size=resize,
-                                 batch_size=1,
-                                 class_mode=None,
-                                 shuffle=False,
-                                 seed=seed,
-                                 subset='validation',
-                                 )
+    # First choose the data set for the samplewise centering
     if datagen.samplewise_center:
-            datagen.fit(pred_generator, augment=True)
+        sw_set = []
+        i_path = os.path.join(inputpath, 'TrainingValid')
+        # Choose one image for each class
+        for label in os.listdir(i_path):
+            # Avoid the csv file used in 'flow from datamanager'.
+            if label.endswith('.csv'):
+                continue
+            images_names = os.listdir(os.path.join(i_path, label))
+            image = mpimg.imread(os.path.join(i_path, label, 
+                                              images_names[0]))
+            sw_set.append(image)
+        datagen.fit(np.array(sw_set), augment=True)
+    # Create the first image generator, containing the data 
+    # for the final prediction   
+    pred_generator = datagen.flow_from_directory(
+                                  directory=os.path.join(inputpath,'Test'),
+                                  target_size=resize,
+                                  batch_size=1,
+                                  class_mode=None,
+                                  shuffle=False,
+                                  seed=seed,
+                                  subset='validation',
+                                  )
     if dataframe is None:
+        # Create validation and training generators flowing from 
+        # all images in the folders
         train_generator = datagen.flow_from_directory(
                                   directory=os.path.join(inputpath,
                                                          'TrainingValid'),
@@ -67,10 +83,12 @@ def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
                                   subset='validation', 
                                   seed=seed)
     else:
+        # Create validation and training generators flowing from 
+        # the images in the folders specified by the input dataframe
         dataframe = pd.read_csv(dataframe)
         train_generator = datagen.flow_from_dataframe(dataframe, 
                                   directory=os.path.join(inputpath, 
-                                                       'TrainingValid'),
+                                                         'TrainingValid'),
                                   x_col="id", y_col="label", 
                                   target_size=resize,
                                   shuffle=True, 
@@ -80,7 +98,7 @@ def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
                                   subset='training')
         valid_generator = datagen.flow_from_dataframe(dataframe, 
                                   directory=os.path.join(inputpath, 
-                                                       'TrainingValid'),
+                                                         'TrainingValid'),
                                   x_col="id", y_col="label", 
                                   target_size=resize, 
                                   shuffle=True,
@@ -88,7 +106,7 @@ def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
                                   batch_size=batch_size, 
                                   class_mode=class_mode, 
                                   subset='validation')
-    return train_generator, valid_generator, pred_generator    
+    return train_generator, valid_generator, pred_generator
 
 class GlitchManager(ImagesManager):
     """
@@ -105,6 +123,8 @@ class GlitchManager(ImagesManager):
     
     @staticmethod    
     def _create_glitches_dict(p_list, duration=2.):
+        """
+        """
         current = mp.current_process()
         print('Running:', current.name, current._identity)
         glts_dict = {}    
@@ -113,7 +133,7 @@ class GlitchManager(ImagesManager):
                                 "*spectrogram_{:.1f}.png".format(duration))
             path_list = glob.glob(ipaths)
             key_label = p_.split('/')[-1]
-            new_glits = [imread(i) for i in path_list]
+            new_glits = [mpimg.imread(i) for i in path_list]
             try:
                 glts_dict[key_label] = np.append(
                                            glts_dict[key_label], new_glits
