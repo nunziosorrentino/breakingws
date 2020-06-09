@@ -167,13 +167,27 @@ class ImagesManager:
             print('DONE, using multiprocessing!')
 
         return cls(dict_images)
-    
+        
     def __len__(self):
         """Return the lenght of the array representing the images.
            This is basicaly the total number of images.
         """
         return self.images.shape[0]*self.images.shape[1]  
 
+        
+    def get_tvt(self, v_split, t_split):
+        """Get the training, validation and test sets, given relative
+           split fraction. The images are therefore ramdomly permutated.
+        """
+        shape_ = self.images.shape
+        all_images = self.images.reshape((len(self), shape_[2], 
+                                          shape_[3], shape_[4])
+        rand_images = np.random.permutation(all_images) 
+        t_set, v_set, tr_set = tuple(np.split(rand_images, 
+                                     [int(len(self)*t_split), 
+                           int(len(self)*t_split+len(self)*v_split)]))
+        return tr_set, v_set, t_set 
+           
     def __iter__(self):
         """This magic method makes class instances iterable over
            the images and labels set.
