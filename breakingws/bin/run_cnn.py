@@ -15,6 +15,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import ast
 import argparse
 import pandas as pd
 import numpy as np
@@ -36,7 +37,8 @@ if __name__=='__main__':
                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("-m", "--model", required=True, type=str, 
                         help=" ")
-    parser.add_argument("-a", "--augmentation", type=bool, default=True, 
+    parser.add_argument("-ag", "--augment", type=ast.literal_eval, 
+                        choices=[True, False], default=False,
                         help=" ")                       
     parser.add_argument("-r", "--dprate", default=0.25, type=float, 
                         help=" ")
@@ -44,13 +46,13 @@ if __name__=='__main__':
                         help= " ")
     parser.add_argument("-id", "--inputdir", type=str, default='data', 
                         help=" ")  
-    parser.add_argument("-df", "--dframe", type=str, default=None, 
-                        help=" ")                                                             
+    parser.add_argument("-df", "--dframe", type=str, default=None, help=" ")                                                             
     parser.add_argument("-b", "--batch", type=int, default=32, 
                         help=" ") 
     parser.add_argument("-e", "--epochs", type=int, default=10, 
                         help=" ")                                        
-    parser.add_argument("-wc", "--wisecenter", type=bool, default=False, 
+    parser.add_argument("-wc", "--wisecenter", type=ast.literal_eval, 
+                        choices=[True, False], default=False, 
                         help=" ")
     parser.add_argument("-zr", "--zoomrange", type=float, default=0.05, 
                         help=" ")  
@@ -60,18 +62,21 @@ if __name__=='__main__':
                         help=" ")
     parser.add_argument("-vs", "--validsplit", type=float, default=0.5, 
                         help=" ") 
-    parser.add_argument("-sm", "--savemodel", type=bool, default=False, 
+    parser.add_argument("-sm", "--savemodel", type=ast.literal_eval, 
+                        choices=[True, False], default=False, 
                         help=" ")
-    parser.add_argument("-sp", "--savepreds", type=bool, default=False, 
+    parser.add_argument("-sp", "--savepreds", type=ast.literal_eval, 
+                        choices=[True, False], default=False, 
                         help=" ")    
-    parser.add_argument("-os", "--outputname", type=str, 
-                        default='results', help=" ")                                                                                     
+    parser.add_argument("-os", "--outputname", type=str, default='results',
+                        help="")         
+                                                                                     
 
     options = parser.parse_args()
 
     # Import arguments from parser
     model_name = options.model
-    augmentation = options.augmentation
+    augment = options.augment
     dprate = options.dprate
     shape = options.shape
     inputdir = options.inputdir
@@ -90,7 +95,7 @@ if __name__=='__main__':
     path_to_dataset = os.path.join('..', 'datamanage', inputdir) 
     #path_to_dataset = os.path.join('..', 'datamanage', 
     #                                'GravitySpyTrainingSetV1D1')
-    if augmentation:
+    if augment:
         assert(shape is not None)
         shape = (shape[0], shape[1], 3)
         resize = (shape[0], shape[1])
@@ -128,9 +133,11 @@ if __name__=='__main__':
         p_gen.reset()
         pred = model.predict(p_gen, steps=p_gen.n, verbose=1)
     
-    if not augmentation:
-        im_manager = ImagesManager.from_directory(path_to_dataset)  
+    if not augment:
+        im_manager = ImagesManager.from_directory(path_to_dataset) 
+        print('Created instance!') 
         t_dl, v_dl, p_dl = im_manager.get_tvp(vsplit, vsplit)
+        print('Got sliced data!')
         classes = im_manager.labels.shape[0]
         shape = im_manager.images.shape[2:]
         # Temporary resize not allowed in non augmentation mode 
