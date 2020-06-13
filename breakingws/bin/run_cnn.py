@@ -20,6 +20,7 @@ import pandas as pd
 import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from breakingws.datamanage.glitchmanager import glts_augment_generator
+from breakingws.datamanage.imagesmanager import ImagesManager
 from breakingws.cnn.glitcha import glitcha_model
 from breakingws.cnn.imma import imma_model
 
@@ -34,16 +35,16 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(description=desc,
                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("-m", "--model", required=True, type=str, 
-                        help=" ")   
+                        help=" ")
+    parser.add_argument("-a", "--augmentation", type=bool, default=True, 
+                        help=" ")                       
     parser.add_argument("-r", "--dprate", default=0.25, type=float, 
                         help=" ")
-    parser.add_argument("-s", "--shape", default=(600, 800), type=tuple,
+    parser.add_argument("-s", "--shape", default=None, type=tuple,
                         help= " ")
-    parser.add_argument("-id", "--inputdir", type=str, 
-                        default='data', 
+    parser.add_argument("-id", "--inputdir", type=str, default='data', 
                         help=" ")  
-    parser.add_argument("-df", "--dframe", type=str, 
-                        default=None, 
+    parser.add_argument("-df", "--dframe", type=str, default=None, 
                         help=" ")                                                             
     parser.add_argument("-b", "--batch", type=int, default=32, 
                         help=" ") 
@@ -70,6 +71,7 @@ if __name__=='__main__':
 
     # Import arguments from parser
     model_name = options.model
+    augmentation = options.augmentation
     dprate = options.dprate
     shape = options.shape
     inputdir = options.inputdir
@@ -85,41 +87,63 @@ if __name__=='__main__':
     savepreds = options.savepreds
     outputname = options.outputname
     
-    shape = (shape[0], shape[1], 3)
-    resize = shape
-
-    image_generator = ImageDataGenerator(samplewise_center=wise_center,
-                                         zoom_range=zoom_range,
-							             width_shift_range=wshift,
-    						             height_shift_range=hshift,
-    						             validation_split=vsplit,
-                                         )  
-    path_to_dataset = os.path.join('..', 'datamanage', inputdir)                                       
+    path_to_dataset = os.path.join('..', 'datamanage', inputdir) 
     #path_to_dataset = os.path.join('..', 'datamanage', 
     #                                'GravitySpyTrainingSetV1D1')
-    if dframe is not None:
-        path_to_dataframe = os.path.join(path_to_dataset, dframe)
-    else:
-        path_to_dataframe = dframe        
-    #path_to_dataframe = os.path.join(path_to_dataset, 
-    #                            'ds_O1_GravitySpy_2.0_archive_summary.csv')                         
-    # Make data augmentation                             
-    t_gen, v_gen, p_gen = glts_augment_generator(path_to_dataset,
-                                          image_generator,
-                                          dataframe=path_to_dataframe, 
-                                          resize=resize, 
-                                          batch_size=batch
-				                          )
-    classes = len(t_gen.class_indices)
-    model = cnn_models[model_name](shape, classes, dprate)
-    model.summary()
-    history = model.fit(t_gen, steps_per_epoch = t_gen.samples//batch, 
-                   validation_data = v_gen, 
-                   validation_steps = v_gen.samples//batch,
-                   epochs=epochs)  
-                   
-    test_results = model.evaluate(v_gen, steps=v_gen.n//v_gen.batch_size)
-    print('test loss and accuracy:', test_results)
+    if augmentation:
+        assert(shape is not None)
+        shape = (shape[0], shape[1], 3)
+        resize = (shape[0], shape[1])
+        image_generator = ImageDataGenerator(samplewise_center=wise_center,
+                                             zoom_range=zoom_range,
+		    					             width_shift_range=wshift,
+    	    					             height_shift_range=hshift,
+    	    					             validation_split=vsplit,
+                                             )  
+        if dframe is not None:
+            path_to_dataframe = os.path.join(path_to_dataset, dframe)
+        else:
+            path_to_dataframe = dframe        
+            #path_to_dataframe = os.path.join(path_to_dataset, 
+            #                   'ds_O1_GravitySpy_2.0_archive_summary.csv')                         
+        # Make data augmentation                             
+        t_gen, v_gen, p_gen = glts_augment_generator(path_to_dataset,
+                                              image_generator,
+                                              dataframe=path_to_dataframe, 
+                                              resize=resize, 
+                                              batch_size=batch
+		    		                          )
+        classes = len(t_gen.class_indices)
+                
+        model = cnn_models[model_name](shape, classes, dprate)
+        model.summary()
+        history = model.fit(t_gen, steps_per_epoch = t_gen.samples//batch, 
+                       validation_data = v_gen, 
+                       validation_steps = v_gen.samples//batch,
+                       epochs=epochs)  
+        print('Started test session:')               
+        test_results = model.evaluate(v_gen, steps=v_gen.n//batch)
+        print('test loss and accuracy:', test_results)
+        print('Started prediction:')
+        p_gen.reset()
+        pred = model.predict(p_gen, steps=p_gen.n, verbose=1)
+    
+    if not augmentation:
+        im_manager = ImagesManager.from_directory(path_to_dataset)  
+        t_dl, v_dl, p_dl = im_manager.get_tvp(vsplit, vsplit)
+        classes = im_manager.labels.shape[0]
+        shape = im_manager.images.shape[2:]
+        # Temporary resize not allowed in non augmentation mode 
+        #resize = (shape[0], shape[1])
+        model = cnn_models[model_name](shape, classes, dprate)
+        model.summary() 
+        history=model.fit(t_dl[0], t_dl[1], batch_size=batch,
+                                   validation_data=v_dl, epochs=epochs)
+        print('Started test session!')                               
+        testresults = model.evaluate(v_dl[0], v_dl[1], batch_size=batch)
+        print('test loss and accuracy:', testresults)
+        print('Started prediction:')
+        pred = model.predict(p_gen[0], steps=len(p_gen[0]), verbose=1)
                    
     if savem:
         model_output = os.path.join('..', 'cnn', 'results')
@@ -128,23 +152,7 @@ if __name__=='__main__':
         print('Saved model to {}'.format(os.path.join('breakingws', 'cnn',
                                                       'glitcha0.1.h5')))                 
         
-    model.summary()  
-    print(history.history.keys())
-    plt.figure()
-    plt.plot(history.history["loss"], label="loss")
-    plt.plot(history.history["val_loss"], label="val_loss")
-    plt.legend()
-    plt.xlabel('Epoch')
-    plt.ylabel('Categorical Crossentropy')
-    
-    plt.figure()
-    plt.plot(history.history["accuracy"], label="accuracy")
-    plt.plot(history.history["val_accuracy"], label="val_accuracy")
-    plt.legend()
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy (0-1)')
-    
-    plt.show()   
+    model.summary()    
     
     if savepreds:
         print('Make predictions on {} samples.'.format(p_gen.n))
@@ -156,9 +164,6 @@ if __name__=='__main__':
             output_csvfile = os.path.join('..', 'cnn', 
                      '{}_{}_{}epochs_no-aug_{}batches_{}dprate.csv'.format(
                             outputname, model_name, epochs, batch, dprate))                            
-        p_gen.reset()
-        pred=model.predict(p_gen, steps=p_gen.n//p_gen.batch_size, 
-                             verbose=1)
         # here there are the predicted labels (the probabilities)
         predicted_class_indices=np.argmax(pred,axis=1)   
         labels = (t_gen.class_indices)
@@ -174,7 +179,24 @@ if __name__=='__main__':
                               "Predictions":predictions,
                               "Probability(%)":predicted_prob*100})
         results.to_csv(output_csvfile, index=False)
-        print('Results saved in {}!'.format(output_csvfile))                      
+        print('Results saved in {}!'.format(output_csvfile))  
+        
+    print(history.history.keys())
+    plt.figure()
+    plt.plot(history.history["loss"], label="loss")
+    plt.plot(history.history["val_loss"], label="val_loss")
+    plt.legend()
+    plt.xlabel('Epoch')
+    plt.ylabel('Categorical Crossentropy')
+    
+    plt.figure()
+    plt.plot(history.history["accuracy"], label="accuracy")
+    plt.plot(history.history["val_accuracy"], label="val_accuracy")
+    plt.legend()
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy (0-1)')
+    
+    plt.show()                         
 
 
 

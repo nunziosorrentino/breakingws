@@ -175,18 +175,24 @@ class ImagesManager:
         return self.images.shape[0]*self.images.shape[1]  
 
         
-    def get_tvt(self, v_split, t_split):
+    def get_tvp(self, v_split, t_split):
         """Get the training, validation and test sets, given relative
            split fraction. The images are therefore ramdomly permutated.
         """
         shape_ = self.images.shape
         all_images = self.images.reshape((len(self), shape_[2], 
-                                          shape_[3], shape_[4])
-        rand_images = np.random.permutation(all_images) 
+                                          shape_[3], shape_[4]))
+        permutation = np.random.permutation(len(self))
+        rand_images = all_images[permutation]
+        rand_labels = self.labels[permutation]                                  
+        
         t_set, v_set, tr_set = tuple(np.split(rand_images, 
                                      [int(len(self)*t_split), 
                            int(len(self)*t_split+len(self)*v_split)]))
-        return tr_set, v_set, t_set 
+        t_lab, v_lab, tr_lab = tuple(np.split(rand_labels, 
+                                     [int(len(self)*t_split), 
+                           int(len(self)*t_split+len(self)*v_split)]))                   
+        return (tr_set, tr_lab), (v_set, v_lab), (t_set, t_lab) 
            
     def __iter__(self):
         """This magic method makes class instances iterable over
@@ -218,6 +224,10 @@ if __name__=='__main__':
     print(test_images.labels[0], test_images.labels[100],
           test_images.labels[200], test_images.labels[300])
     print('Imgs keys are:', list(test_images.dict_imgs.keys()))
+    train_, valor_, prov_ = test_images.get_tvp(0.15, 0.15)
+    print(len(train_[0]), len(train_[1]))
+    print(len(valor_[0]), len(valor_[1]))
+    print(len(prov_[0]), len(prov_[1]))
         
 
 
