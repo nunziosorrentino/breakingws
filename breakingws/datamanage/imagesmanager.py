@@ -65,7 +65,7 @@ class ImagesManager:
     attribute 'images_id'.
     """
     def __init__(self, images, images_id=''):
-        """Image base constructor.
+        """Images base constructor.
            
         """
         assert(isinstance(images_id, str))
@@ -81,6 +81,11 @@ class ImagesManager:
             label_matrix = np.eye(len(self.images_ids), dtype=int)
             repeats = [len(k_) for k_ in list(images.values())]
             self.labels = np.repeat(label_matrix, repeats, axis=0)
+        self.shape = self.images.shape    
+        self.images = self.images.reshape((self.shape[0]*self.shape[1], 
+                                           self.shape[2], self.shape[3], 
+                                           self.shape[4])) 
+        self.shape = self.images.shape                                              
 
     def add_images(self, images, images_id=''):
         """Peculiar method that adds new images and related labels
@@ -88,6 +93,8 @@ class ImagesManager:
            a new classification .
         """
         self.images = np.append(self.images, images, axis=0)
+        self.shape = self.images.shape    
+         
         if images_id in self.images_ids:
             self.dict_imgs[images_id] = \
             np.concatenate(self.dict_imgs[images_id], images)
@@ -107,17 +114,17 @@ class ImagesManager:
             self.labels = np.append(self.labels, new_labels, axis=0)
             
     @staticmethod
-    def _create_images_dict(p_list):
+    def _create_images_dict(p_gen):
         """
         """
         current = mp.current_process()
         print('Running:', current.name, current._identity)
         imgs_dict = {}    
-        for p_ in p_list:
+        for p_ in p_gen:
             ipaths = os.path.join(p_, "*.png")
-            path_list = glob.glob(ipaths)
+            path_gen = glob.iglob(ipaths)
             key_label = p_.split('/')[-1]
-            new_images = [imread(i) for i in path_list]
+            new_images = [imread(i) for i in path_gen]
             try:
                 imgs_dict[key_label] = np.append(imgs_dict[key_label], 
                                              new_images)
@@ -148,15 +155,15 @@ class ImagesManager:
         """
         
         parents_path = os.path.join(dir_path, "*") 
-        p_path_list = glob.glob(parents_path)
+        p_path_gen = glob.iglob(parents_path)
         
         if nproc is None:
-            dict_images = cls._create_images_dict(p_path_list)
+            dict_images = cls._create_images_dict(p_path_gen)
             
         else:
-            n_files = len(p_path_list)
+            n_files = len(p_path_gen)
             splits_list = [n_files//nproc*(i+1) for i in range(nproc-1)]
-            proc_iterable = np.split(p_path_list, splits_list)
+            proc_iterable = np.split(p_path_gen, splits_list)
         
             res = cls._pool_handler(proc_iterable, nproc)
         
@@ -172,26 +179,30 @@ class ImagesManager:
         """Return the lenght of the array representing the images.
            This is basicaly the total number of images.
         """
-        return self.images.shape[0]*self.images.shape[1]  
-
+        return self.shape[0] 
+    
+    def set_random(self):
+        """Randomply permutate images and labels at unison. The changes 
+           will be stored in 'images' and 'labels' attributes.
+        """    
+        print('Starting randomization!')
+        self.images = self.images[np.random.permutation(len(self))]
+        self.labels = self.labels[np.random.permutation(len(self))] 
+        print('Images randomly mixed!')  
         
-    def get_tvp(self, v_split, t_split):
+    def get_partial(self, split, rand=True):
         """Get the training, validation and test sets, given relative
            split fraction. The images are therefore ramdomly permutated.
         """
-        shape_ = self.images.shape
-        all_images = self.images.reshape((len(self), shape_[2], 
-                                          shape_[3], shape_[4]))
-        permutation = np.random.permutation(len(self))
-        rand_images = all_images[permutation]
-        rand_labels = self.labels[permutation]                                  
-        
-        t_set, v_set, tr_set = tuple(np.split(rand_images, 
-                                     [int(len(self)*t_split), 
-                           int(len(self)*t_split+len(self)*v_split)]))
-        t_lab, v_lab, tr_lab = tuple(np.split(rand_labels, 
-                                     [int(len(self)*t_split), 
-                           int(len(self)*t_split+len(self)*v_split)]))                   
+        if rand:
+            self.set_random()
+        t_set, v_set, tr_set = tuple(np.split(self.images, 
+                                    [int(len(self)*split), 
+                                    int(len(self)*split+len(self)*split)]))
+        t_lab, v_lab, tr_lab = tuple(np.split(self.labels, 
+                                    [int(len(self)*split), 
+                                    int(len(self)*split+len(self)*split)]))
+        print('Data splitted in training, validation and test sets!')                                      
         return (tr_set, tr_lab), (v_set, v_lab), (t_set, t_lab) 
            
     def __iter__(self):
@@ -219,12 +230,12 @@ if __name__=='__main__':
                                                )
     print('LABELS:', test_images.images_ids)
     print('There are', len(test_images), 'images')
-    print('But images are:', test_images.images.shape, 'dimentioned')
+    print('But images are:', test_images.shape, 'dimentioned')
     print('and labels are:', test_images.labels.shape, 'dimentioned')
     print(test_images.labels[0], test_images.labels[100],
           test_images.labels[200], test_images.labels[300])
     print('Imgs keys are:', list(test_images.dict_imgs.keys()))
-    train_, valor_, prov_ = test_images.get_tvp(0.15, 0.15)
+    train_, valor_, prov_ = test_images.get_partial(0.15)
     print(len(train_[0]), len(train_[1]))
     print(len(valor_[0]), len(valor_[1]))
     print(len(prov_[0]), len(prov_[1]))

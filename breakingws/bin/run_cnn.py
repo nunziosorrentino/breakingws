@@ -135,9 +135,7 @@ if __name__=='__main__':
     
     if not augment:
         im_manager = ImagesManager.from_directory(path_to_dataset) 
-        print('Created instance!') 
-        t_dl, v_dl, p_dl = im_manager.get_tvp(vsplit, vsplit)
-        print('Got sliced data!')
+        t_dl, v_dl, p_dl = im_manager.get_partial(vsplit)
         classes = im_manager.labels.shape[0]
         shape = im_manager.images.shape[2:]
         # Temporary resize not allowed in non augmentation mode 
