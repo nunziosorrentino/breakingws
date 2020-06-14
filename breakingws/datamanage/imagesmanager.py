@@ -22,8 +22,6 @@ import numpy as np
 from matplotlib.pyplot import imread
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-N_CPUS = mp.cpu_count()
-
 """
 This is a module containing all you need for a correct images management
 (helpfull storage, user friendly methods for reading/writing and be able
@@ -225,7 +223,7 @@ class ImagesManager:
             raise KeyError("Not acceptable type for {}".format(images_key))
         
 if __name__=='__main__':
-    
+    N_CPUS = mp.cpu_count()
     test_images = ImagesManager.from_directory('data',
                                                #nproc=N_CPUS
                                                )
