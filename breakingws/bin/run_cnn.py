@@ -135,7 +135,7 @@ if __name__=='__main__':
     
     if not augment:
         im_manager = ImagesManager.from_directory(path_to_dataset) 
-        t_dl, v_dl, p_dl = im_manager.get_partial(vsplit, False)
+        t_dl, v_dl, p_dl = im_manager.get_partial(vsplit)
         classes = len(im_manager.images_ids)
         shape = im_manager.shape[1:]
         # Temporary resize not allowed in non augmentation mode 
