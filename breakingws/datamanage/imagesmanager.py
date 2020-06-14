@@ -156,7 +156,7 @@ class ImagesManager:
         """
         
         parents_path = os.path.join(dir_path, "*") 
-        p_path_gen = glob.iglob(parents_path)
+        p_path_gen = glob.glob(parents_path)
         
         if nproc is None:
             dict_images = cls._create_images_dict(p_path_gen)

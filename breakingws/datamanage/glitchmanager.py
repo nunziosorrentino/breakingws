@@ -29,6 +29,40 @@ def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
     This is a function that collects glitches spectrograms 
     in three different generators (training, validation and test) 
     with the option of choosing data augmentation. 
+    
+    Arguments
+    ---------
+    inputpath : str
+        Path to the directory containing Test and TrainingValid folsers.
+
+    datagen : *tf.keras.preprocessing.image.ImageDataGenerator*
+        Generator instance of keras images processing utilities, 
+        containing glitches-indipendent image transformations that you 
+        want to apply. If *ImageDataGenerator()* is given, no data 
+        augmentation is imposed.
+        
+    dataframe : str
+        Path to the *csv* file containing which images must be 
+        loaded from the input directory. If None, all images are loaded.
+        
+    resize : tuple
+        Number of pixels in each axes (p_x, p_y) at which the images are
+        resized. If None, no resize is applied. 
+        
+    seed : int
+        Seed of the data randomization. 
+        
+    batch_size : int
+        Number of batches in training and validation sets. 
+        
+    class_mode : str
+        Classification function used in data labeling.  
+        
+    Returns
+    -------
+    train_generator, valid_generator, pred_generator : DirectoryIterator, DataFrameIterator
+        Returns three different generators from *tf.keras.preprocessing.image*
+        for training, validation and test set rispectively.                
     """
     # First choose the data set for the samplewise centering
     if datagen.samplewise_center:

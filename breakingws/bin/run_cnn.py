@@ -20,7 +20,9 @@ import argparse
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
 from breakingws.datamanage.glitchmanager import glts_augment_generator
 from breakingws.datamanage.imagesmanager import ImagesManager
 from breakingws.cnn.glitcha import glitcha_model
@@ -32,7 +34,10 @@ cnn_models = dict(glitcha=glitcha_model,
 if __name__=='__main__':
 
     desc = \
-    """Something
+    """This tool represents the core of BreakinGWs package. Here you can 
+       use CNN models proposed, make data augmentation, make training,
+       validation and test sessions and finally make a table with the 
+       predictions. The model weights can be saved as well.
     """
     parser = argparse.ArgumentParser(description=desc,
                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -40,14 +45,17 @@ if __name__=='__main__':
                         help=" ")
     parser.add_argument("-ag", "--augment", type=ast.literal_eval, 
                         choices=[True, False], default=False,
-                        help=" ")                       
+                        help=" ")
+    parser.add_argument("-nc", "--ncpus", type=int, default=None,
+                        help=" ")                                           
     parser.add_argument("-r", "--dprate", default=0.25, type=float, 
                         help=" ")
     parser.add_argument("-s", "--shape", default=None, type=tuple,
                         help= " ")
     parser.add_argument("-id", "--inputdir", type=str, default='data', 
                         help=" ")  
-    parser.add_argument("-df", "--dframe", type=str, default=None, help=" ")                                                             
+    parser.add_argument("-df", "--dframe", type=str, default=None, 
+                        help=" ")                                                             
     parser.add_argument("-b", "--batch", type=int, default=32, 
                         help=" ") 
     parser.add_argument("-e", "--epochs", type=int, default=10, 
@@ -78,6 +86,7 @@ if __name__=='__main__':
     # Import arguments from parser
     model_name = options.model
     augment = options.augment
+    ncpus = options.ncpus
     dprate = options.dprate
     shape = options.shape
     inputdir = options.inputdir
@@ -135,7 +144,7 @@ if __name__=='__main__':
         pred = model.predict(p_gen, steps=p_gen.n, verbose=1)
     
     if not augment:
-        im_manager = ImagesManager.from_directory(path_to_dataset) 
+        im_manager = ImagesManager.from_directory(path_to_dataset, ncpus) 
         t_dl, v_dl, p_dl = im_manager.get_partial(vsplit)
         classes = len(im_manager.images_ids)
         shape = im_manager.shape[1:]
@@ -144,7 +153,8 @@ if __name__=='__main__':
         model = cnn_models[model_name](shape, classes, dprate)
         model.summary() 
         history=model.fit(t_dl[0], t_dl[1], batch_size=batch,
-                          validation_data=(v_dl[0], v_dl[1]), epochs=epochs)
+                          validation_data=(v_dl[0], v_dl[1]), 
+                          epochs=epochs)
         print('Started test session!')                               
         testresults = model.evaluate(v_dl[0], v_dl[1], batch_size=batch)
         print('test loss and accuracy:', testresults)
@@ -156,7 +166,7 @@ if __name__=='__main__':
         model.save_weights(os.path.join(model_output, 
                            '{}weights.h5'.format(model_name)))
         print('Saved model to {}'.format(os.path.join('breakingws', 'cnn',
-                                                      'glitcha0.1.h5')))                 
+                                       '{}weights.h5'.format(model_name))))                 
         
     model.summary()    
     
@@ -164,11 +174,11 @@ if __name__=='__main__':
         print('Make predictions on {} samples.'.format(p_gen.n))
         if wise_center:
             output_csvfile = os.path.join('..', 'cnn', 
-                        '{}_{}_{}epochs_aug_{}batches_{}dprate.csv'.format(
+                        '{}_{}_{}epochs_wc_{}batches_{}dprate.csv'.format(
                             outputname, model_name, epochs, batch, dprate)) 
         if not wise_center:
             output_csvfile = os.path.join('..', 'cnn', 
-                     '{}_{}_{}epochs_no-aug_{}batches_{}dprate.csv'.format(
+                     '{}_{}_{}epochs_no-wc_{}batches_{}dprate.csv'.format(
                             outputname, model_name, epochs, batch, dprate))                            
         # here there are the predicted labels (the probabilities)
         predicted_class_indices=np.argmax(pred,axis=1)   
