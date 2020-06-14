@@ -21,7 +21,7 @@ import numpy as np
 import os
 import cv2
 
-imgs_shape = (600, 800, 3)
+imgs_shape = (64, 64, 3)
 # Generate random colors for all king of figures
 def randomColor():
     return (int(np.random.rand()*128+128),
@@ -34,9 +34,9 @@ def drawCircle(c,x,y,r):
     return img
 
 def genCircle():
-    im = drawCircle(randomColor(),int(np.random.uniform(300, 500)),
-                    int(np.random.uniform(200, 400)), 
-                    int(np.random.uniform(100, 300)))
+    im = drawCircle(randomColor(),int(np.random.uniform(20, 44)),
+                    int(np.random.uniform(25, 44)), 
+                    int(np.random.uniform(10, 20)))
     return im
 
 # Generate ellispe
@@ -47,10 +47,10 @@ def drawEllipse(c,x,y,a,b):
     return img
 
 def genEllipse():
-    im = drawEllipse(randomColor(),int(np.random.uniform(300, 500)),
-                     int(np.random.uniform(200, 400)),
-                     int(np.random.uniform(200, 400)), 
-                     int(np.random.uniform(100, 200)))
+    im = drawEllipse(randomColor(),int(np.random.uniform(20, 44)),
+                     int(np.random.uniform(20, 44)),
+                     int(np.random.uniform(20, 30)), 
+                     int(np.random.uniform(10, 20)))
     return im
 
 # Generate rectangle
@@ -60,23 +60,23 @@ def drawRectangle(c,x,y,w,h):
     return img
 
 def genRectangle():
-    im = drawRectangle(randomColor(),int(np.random.uniform(300, 500)),
-                       int(np.random.uniform(200, 400)),
-                       int(np.random.uniform(100, 400)), 
-                       int(np.random.uniform(100, 400)))
+    im = drawRectangle(randomColor(),int(np.random.uniform(10, 32)),
+                       int(np.random.uniform(10, 32)),
+                       int(np.random.uniform(10, 32)), 
+                       int(np.random.uniform(10, 32)))
     return im
 
 # Generate lines
 def drawLine(c,x,y,w,h):
     img = np.zeros(imgs_shape, np.uint8)
-    cv2.line(img,(x,y),((x+w),(y+h)), c, 9)
+    cv2.line(img,(x,y),((x+w),(y+h)), c, 1)
     return img
 
 def genLine():
-    im = drawLine(randomColor(), int(np.random.uniform(300, 500)),
-                  int(np.random.uniform(200, 400)),
-                  int(np.random.uniform(-300, 100)), 
-                  int(np.random.uniform(-200, 200)))
+    im = drawLine(randomColor(), int(np.random.uniform(27, 42)),
+                  int(np.random.uniform(27, 42)),
+                  int(np.random.uniform(-32, 32)), 
+                  int(np.random.uniform(-32, 32)))
     return im
 
 #usefull calss for labels
