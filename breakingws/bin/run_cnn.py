@@ -19,6 +19,7 @@ import ast
 import argparse
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from breakingws.datamanage.glitchmanager import glts_augment_generator
 from breakingws.datamanage.imagesmanager import ImagesManager
@@ -148,7 +149,7 @@ if __name__=='__main__':
         testresults = model.evaluate(v_dl[0], v_dl[1], batch_size=batch)
         print('test loss and accuracy:', testresults)
         print('Started prediction:')
-        pred = model.predict(p_gen[0], steps=len(p_gen[0]), verbose=1)
+        pred = model.predict(p_dl[0], steps=len(p_dl[0]), verbose=1)
                    
     if savem:
         model_output = os.path.join('..', 'cnn', 'results')
