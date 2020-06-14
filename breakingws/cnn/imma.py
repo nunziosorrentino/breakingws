@@ -18,7 +18,7 @@ from tensorflow.keras.models import Model
 
 def imma_model(shape, classes=4, dprate=0.5):
 
-    inputs = Input(shape=imgs_shape) 
+    inputs = Input(shape=shape) 
 
     # Block 1
     hidden = Conv2D(8,(3,3), activation='relu')(inputs) 

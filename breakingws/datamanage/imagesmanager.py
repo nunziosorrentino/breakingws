@@ -53,13 +53,14 @@ class ImagesManager:
     images_ids 
     labels 
     dict_imgs
+    shape
 
     Examples
     --------
     If you have 40 images with 64x64 pixels and 3 channels,
     with 4 different labels, encapsulated in directory and subdirectories,
     the input images are converted in an array with
-    shape (4, 10, 64, 64, 3).
+    shape (40, 64, 64, 3).
 
     Labels will be collected in (40, 4) names will be collected in the list 
     attribute 'images_id'.

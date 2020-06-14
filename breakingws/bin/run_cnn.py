@@ -135,15 +135,15 @@ if __name__=='__main__':
     
     if not augment:
         im_manager = ImagesManager.from_directory(path_to_dataset) 
-        t_dl, v_dl, p_dl = im_manager.get_partial(vsplit)
-        classes = im_manager.labels.shape[0]
-        shape = im_manager.images.shape[2:]
+        t_dl, v_dl, p_dl = im_manager.get_partial(vsplit, False)
+        classes = len(im_manager.images_ids)
+        shape = im_manager.shape[1:]
         # Temporary resize not allowed in non augmentation mode 
         #resize = (shape[0], shape[1])
         model = cnn_models[model_name](shape, classes, dprate)
         model.summary() 
         history=model.fit(t_dl[0], t_dl[1], batch_size=batch,
-                                   validation_data=v_dl, epochs=epochs)
+                          validation_data=(v_dl[0], v_dl[1]), epochs=epochs)
         print('Started test session!')                               
         testresults = model.evaluate(v_dl[0], v_dl[1], batch_size=batch)
         print('test loss and accuracy:', testresults)
