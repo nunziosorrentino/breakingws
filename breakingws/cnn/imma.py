@@ -35,7 +35,7 @@ def imma_model(shape, classes=4, dprate=0.5, minfilts=4):
 
     # Block 3
     hidden = Flatten()(hidden)
-    hidden = Dense(50, activation='relu')(hidden) 
+    hidden = Dense(minfilts*16, activation='relu')(hidden) 
     hidden = Dropout(dprate)(hidden) 
 
     outputs = Dense(classes, activation='softmax')(hidden) 

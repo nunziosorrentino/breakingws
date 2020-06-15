@@ -44,7 +44,7 @@ def glitcha_model(shape, classes=4, dprate=0.25, minfilts=16):
 
 	# Block 4
 	hidden = Flatten()(hidden)
-	hidden = Dense(512, activation='relu')(hidden) 
+	hidden = Dense(minfilts*8*4, activation='relu')(hidden) 
 	hidden = Dropout(dprate)(hidden) 
     
     # Block 4
