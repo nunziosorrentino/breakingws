@@ -27,15 +27,15 @@ def imma_model(shape, classes=4, dprate=0.5, minfilts=4):
     hidden = Dropout(dprate)(hidden)
     
     # Block 2
-    hidden = Conv2D(minfilts*4,(3,3), activation='relu')(hidden) 
-    hidden = MaxPooling2D((2,2))(hidden)  
-    hidden = Conv2D(minfilts*4,(3,3), activation='relu')(hidden) 
-    hidden = MaxPooling2D((2,2))(hidden)
-    hidden = Dropout(dprate)(hidden) 
+    #hidden = Conv2D(minfilts*4,(3,3), activation='relu')(hidden) 
+    #hidden = MaxPooling2D((2,2))(hidden)  
+    #hidden = Conv2D(minfilts*4,(3,3), activation='relu')(hidden) 
+    #hidden = MaxPooling2D((2,2))(hidden)
+    #hidden = Dropout(dprate)(hidden) 
 
     # Block 3
     hidden = Flatten()(hidden)
-    hidden = Dense(minfilts*16, activation='relu')(hidden) 
+    hidden = Dense(minfilts*2*4, activation='relu')(hidden) 
     hidden = Dropout(dprate)(hidden) 
 
     outputs = Dense(classes, activation='softmax')(hidden) 
