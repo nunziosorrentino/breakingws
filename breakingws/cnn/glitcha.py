@@ -19,26 +19,26 @@ from tensorflow.keras.models import Model
 # (600, 800, 3)
 # but the data manager let us resize them
 
-def glitcha_model(shape, classes=2, dprate=0.25):
+def glitcha_model(shape, classes=4, dprate=0.25, minfilts=16):
 
 	inputs = Input(shape=shape) 
 
 	# Block 1
-	hidden = Conv2D(16,(3,3), activation='relu')(inputs) 
-	hidden = Conv2D(32,(3,3), activation='relu')(hidden) 
+	hidden = Conv2D(minfilts,(3,3), activation='relu')(inputs) 
+	hidden = Conv2D(minfilts*2,(3,3), activation='relu')(hidden) 
 	hidden = MaxPooling2D((2,2))(hidden)
 	hidden = Dropout(dprate)(hidden) 
 	# Block 2
-	hidden = Conv2D(64,(3,3), activation='relu')(hidden) 
+	hidden = Conv2D(minfilts*4,(3,3), activation='relu')(hidden) 
 	hidden = MaxPooling2D((2,2))(hidden)  
-	hidden = Conv2D(64,(3,3), activation='relu')(hidden) 
+	hidden = Conv2D(minfilts*4,(3,3), activation='relu')(hidden) 
 	hidden = MaxPooling2D((2,2))(hidden)
 	hidden = Dropout(dprate)(hidden) 
 
 	# Block 3 
-	hidden = Conv2D(128,(3,3), activation='relu')(hidden)
+	hidden = Conv2D(minfilts*8,(3,3), activation='relu')(hidden)
 	hidden = MaxPooling2D((2,2))(hidden)
-	hidden = Conv2D(128,(3,3), activation='relu')(hidden) 
+	hidden = Conv2D(minfilts*8,(3,3), activation='relu')(hidden) 
 	hidden = MaxPooling2D((2,2))(hidden)
 	hidden = Dropout(dprate)(hidden)
 
@@ -49,7 +49,7 @@ def glitcha_model(shape, classes=2, dprate=0.25):
     
     # Block 4
 	outputs = Dense(classes, activation='softmax')(hidden) 
-	#activation='sigmoid' but softmax is more efficient for multiclass
+	# 'softmax' is more efficient for multiclass
 	model = Model(inputs=inputs, outputs=outputs)
 	model.compile(loss='categorical_crossentropy', optimizer='adam',
                       metrics=['accuracy'])

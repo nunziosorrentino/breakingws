@@ -16,31 +16,30 @@ from tensorflow.keras.layers import Input,Dense,Dropout,Conv2D,\
                                     MaxPooling2D,Flatten
 from tensorflow.keras.models import Model
 
-def imma_model(shape, classes=4, dprate=0.5):
+def imma_model(shape, classes=4, dprate=0.5, minfilts=4):
 
     inputs = Input(shape=shape) 
 
     # Block 1
-    hidden = Conv2D(8,(3,3), activation='relu')(inputs) 
-    hidden = Conv2D(16,(3,3), activation='relu')(hidden) 
+    hidden = Conv2D(minfilts,(3,3), activation='relu')(inputs) 
+    hidden = Conv2D(minfilts*2,(3,3), activation='relu')(hidden) 
     hidden = MaxPooling2D((2,2))(hidden)
     hidden = Dropout(dprate)(hidden)
     
     # Block 2
-    hidden = Conv2D(32,(3,3), activation='relu')(hidden) 
+    hidden = Conv2D(minfilts*4,(3,3), activation='relu')(hidden) 
     hidden = MaxPooling2D((2,2))(hidden)  
-    hidden = Conv2D(32,(3,3), activation='relu')(hidden) 
+    hidden = Conv2D(minfilts*4,(3,3), activation='relu')(hidden) 
     hidden = MaxPooling2D((2,2))(hidden)
     hidden = Dropout(dprate)(hidden) 
 
     # Block 3
     hidden = Flatten()(hidden)
-    hidden = Dense(128, activation='relu')(hidden) 
+    hidden = Dense(50, activation='relu')(hidden) 
     hidden = Dropout(dprate)(hidden) 
 
-    # Block 4
     outputs = Dense(classes, activation='softmax')(hidden) 
-    #activation='sigmoid' but softmax is more efficient for multiclass
+    # 'softmax' is more efficient for multiclass
     model = Model(inputs=inputs, outputs=outputs)
     model.compile(loss='categorical_crossentropy', optimizer='adam',
               metrics=['accuracy'])

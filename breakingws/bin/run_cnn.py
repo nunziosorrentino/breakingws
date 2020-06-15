@@ -50,6 +50,8 @@ if __name__=='__main__':
                         help=" ")                                           
     parser.add_argument("-r", "--dprate", default=0.25, type=float, 
                         help=" ")
+    parser.add_argument("-mf", "--minf", default=4, type=int, 
+                        help=" ")                    
     parser.add_argument("-s", "--shape", default=None, type=tuple,
                         help= " ")
     parser.add_argument("-id", "--inputdir", type=str, default='data', 
@@ -76,7 +78,10 @@ if __name__=='__main__':
                         help=" ")
     parser.add_argument("-sp", "--savepreds", type=ast.literal_eval, 
                         choices=[True, False], default=False, 
-                        help=" ")    
+                        help=" ")  
+    parser.add_argument("-sf", "--savefig", type=ast.literal_eval, 
+                        choices=[True, False], default=False, 
+                        help=" ")                      
     parser.add_argument("-os", "--outputname", type=str, default='results',
                         help="")         
                                                                                      
@@ -88,6 +93,7 @@ if __name__=='__main__':
     augment = options.augment
     ncpus = options.ncpus
     dprate = options.dprate
+    minf = options.minf
     shape = options.shape
     inputdir = options.inputdir
     dframe = options.dframe
@@ -100,11 +106,12 @@ if __name__=='__main__':
     vsplit = options.validsplit
     savem = options.savemodel
     savepreds = options.savepreds
+    savefig = options.savefig
     outputname = options.outputname
     
+    # The set mist be contained in datamenage directory
     path_to_dataset = os.path.join('..', 'datamanage', inputdir) 
-    #path_to_dataset = os.path.join('..', 'datamanage', 
-    #                                'GravitySpyTrainingSetV1D1')
+
     if augment:
         assert(shape is not None)
         shape = (shape[0], shape[1], 3)
@@ -119,18 +126,17 @@ if __name__=='__main__':
             path_to_dataframe = os.path.join(path_to_dataset, dframe)
         else:
             path_to_dataframe = dframe        
-            #path_to_dataframe = os.path.join(path_to_dataset, 
-            #                   'ds_O1_GravitySpy_2.0_archive_summary.csv')                         
-        # Make data augmentation                             
+                                     
+        # Make data augmentation   
         t_gen, v_gen, p_gen = glts_augment_generator(path_to_dataset,
-                                              image_generator,
-                                              dataframe=path_to_dataframe, 
-                                              resize=resize, 
-                                              batch_size=batch
-		    		                          )
+                                               image_generator,
+                                               dataframe=path_to_dataframe, 
+                                               resize=resize, 
+                                               batch_size=batch
+		    		                           )
         classes = len(t_gen.class_indices)
                 
-        model = cnn_models[model_name](shape, classes, dprate)
+        model = cnn_models[model_name](shape, classes, dprate, minf)
         model.summary()
         history = model.fit(t_gen, steps_per_epoch = t_gen.samples//batch, 
                        validation_data = v_gen, 
@@ -162,7 +168,7 @@ if __name__=='__main__':
         pred = model.predict(p_dl[0], steps=len(p_dl[0]), verbose=1)
                    
     if savem:
-        model_output = os.path.join('..', 'cnn', 'results')
+        model_output = os.path.join('..', 'cnn', outputname)
         model.save_weights(os.path.join(model_output, 
                            '{}weights.h5'.format(model_name)))
         print('Saved model to {}'.format(os.path.join('breakingws', 'cnn',
@@ -172,14 +178,9 @@ if __name__=='__main__':
     
     if savepreds:
         print('Make predictions on {} samples.'.format(p_gen.n))
-        if wise_center:
-            output_csvfile = os.path.join('..', 'cnn', 
-                        '{}_{}_{}epochs_wc_{}batches_{}dprate.csv'.format(
-                            outputname, model_name, epochs, batch, dprate)) 
-        if not wise_center:
-            output_csvfile = os.path.join('..', 'cnn', 
-                     '{}_{}_{}epochs_no-wc_{}batches_{}dprate.csv'.format(
-                            outputname, model_name, epochs, batch, dprate))                            
+        output_csvfile = os.path.join('..', 'cnn', outputname,
+      'predictions_{}_{}epochs_{}minfilters_{}batches_{}dprate.csv'.format(
+                        model_name, epochs, minf, batch, dprate))                            
         # here there are the predicted labels (the probabilities)
         predicted_class_indices=np.argmax(pred,axis=1)   
         labels = (t_gen.class_indices)
@@ -197,22 +198,27 @@ if __name__=='__main__':
         results.to_csv(output_csvfile, index=False)
         print('Results saved in {}!'.format(output_csvfile))  
         
-    print(history.history.keys())
-    plt.figure()
-    plt.plot(history.history["loss"], label="loss")
-    plt.plot(history.history["val_loss"], label="val_loss")
-    plt.legend()
-    plt.xlabel('Epoch')
-    plt.ylabel('Categorical Crossentropy')
+    if savefig:
+        plt.figure()
+        plt.plot(history.history["loss"], label="loss")
+        plt.plot(history.history["val_loss"], label="val_loss")
+        plt.legend()
+        plt.xlabel('Epoch')
+        plt.ylabel('Categorical Crossentropy')
+        plt.savefig(os.path.join('..', 'cnn', outputname,
+               'loss_{}epochs_{}minfilters_{}batches_{}dprate.png').format(
+                       model_name, epochs, minf, batch, dprate))
     
-    plt.figure()
-    plt.plot(history.history["accuracy"], label="accuracy")
-    plt.plot(history.history["val_accuracy"], label="val_accuracy")
-    plt.legend()
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy (0-1)')
-    
-    plt.show()                         
+        plt.figure()
+        plt.plot(history.history["accuracy"], label="accuracy")
+        plt.plot(history.history["val_accuracy"], label="val_accuracy")
+        plt.legend()
+        plt.xlabel('Epoch')
+        plt.ylabel('Accuracy (0-1)')
+        plt.savefig(os.path.join('..', 'cnn', outputname,
+           'accuracy_{}epochs_{}minfilters_{}batches_{}dprate.png').format(
+                       model_name, epochs, minf, batch, dprate))
+                        
 
 
 
