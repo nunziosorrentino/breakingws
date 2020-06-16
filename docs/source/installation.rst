@@ -21,3 +21,21 @@ Then verifies that it is Python3.6!
 
 Create and set the environment
 ------------------------------
+
+In order to give you the best from this package, BreakinGWs must be run on the same Python environment with which has been developed. In order to ensure this, a bash file voted to this  purpose is the one that reach the right prerequisites. Just type:
+
+```bash
+$ ./create-env.sh
+```
+If an encouraging message of success comes up, you can go the the next step.
+
+Now you can setup the environment:
+```bash
+$ source setup.sh
+```
+**This step must be done every time you refresh your terminal.** 
+
+If everything has gone well, you should see something like this in your command line:
+```bash
+(venv-breakingws-py3) <user>@<host>:
+```
