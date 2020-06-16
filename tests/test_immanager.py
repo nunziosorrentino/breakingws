@@ -47,6 +47,7 @@ class TestImages(unittest.TestCase):
            in the same way.
         """   
         test_images.set_random()
+        print(test_images.images_ids)
         for i, l in test_images:
             if l[0]==1:
                 self.assertEqual(i[0][0][0], 1.)
