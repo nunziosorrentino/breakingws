@@ -185,8 +185,9 @@ class ImagesManager:
            will be stored in 'images' and 'labels' attributes.
         """    
         print('Starting randomization!')
-        self.images = self.images[np.random.permutation(len(self))]
-        self.labels = self.labels[np.random.permutation(len(self))] 
+        permutation = np.random.permutation(len(self))
+        self.images = self.images[permutation]
+        self.labels = self.labels[permutation] 
         print('Images randomly mixed!')  
         
     def get_partial(self, split, rand=True):
@@ -208,7 +209,8 @@ class ImagesManager:
         """This magic method makes class instances iterable over
            the images and labels set.
         """
-        return self.images, self.labels
+        im_la=[(self.images[i], self.labels[i]) for i in range(len(self))]
+        return iter(im_la)
 
     def __getitem__(self, images_key):
         """Get the set of images and labels with the same category
