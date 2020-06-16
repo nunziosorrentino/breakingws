@@ -19,12 +19,10 @@ Contents
    modules
    installation
    breakingws
+   
+Gravity Spy Dataset
+-------------------
+   
+.. image:: figures/GravitySpy.png
 
-.. _api:
 
-Main module
------------
-
-.. automodule:: breakingws.datamanage.imagesmanager
-   :members:
-   :noindex:
