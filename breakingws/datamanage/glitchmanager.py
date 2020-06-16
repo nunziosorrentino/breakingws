@@ -60,9 +60,7 @@ def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
         
     Returns
     -------
-    train_generator, valid_generator, pred_generator : 
-    `~tf.keras.preprocessing.image.DirectoryIterator`, 
-    `~tf.keras.preprocessing.image.DataFrameIterator`
+    train_generator, valid_generator, pred_generator : `~tf.keras.preprocessing.image.DirectoryIterator`, `~tf.keras.preprocessing.image.DataFrameIterator`
         Returns three different generators for
         training, validation and test set rispectively.                
     """
