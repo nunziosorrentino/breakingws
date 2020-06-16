@@ -33,13 +33,13 @@ def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
     Arguments
     ---------
     inputpath : str
-        Path to the directory containing Test and TrainingValid folsers.
+        Path to the directory containing Test and TrainingValid folders.
 
-    datagen : *tf.keras.preprocessing.image.ImageDataGenerator*
+    datagen : `~tf.keras.preprocessing.image.ImageDataGenerator`
         Generator instance of keras images processing utilities, 
         containing glitches-indipendent image transformations that you 
-        want to apply. If *ImageDataGenerator()* is given, no data 
-        augmentation is imposed.
+        want to apply. If *ImageDataGenerator()* (deafult value) is given, 
+        no data augmentation is imposed.
         
     dataframe : str
         Path to the *csv* file containing which images must be 
@@ -60,9 +60,9 @@ def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
         
     Returns
     -------
-    train_generator, valid_generator, pred_generator : DirectoryIterator, DataFrameIterator
-        Returns three different generators from *tf.keras.preprocessing.image*
-        for training, validation and test set rispectively.                
+    train_generator, valid_generator, pred_generator : `~tf.keras.preprocessing.image.DirectoryIterator`, `~tf.keras.preprocessing.image.DataFrameIterator`
+        Returns three different generators for
+        training, validation and test set rispectively.                
     """
     # First choose the data set for the samplewise centering
     if datagen.samplewise_center:

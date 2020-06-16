@@ -6,12 +6,6 @@ Package
 Submodules
 ----------
 
-Core Modules
-------------
-
-.. automodule:: breakingws.core.pdf
-   :members:
-
 Data Manager Modules
 --------------------
 
