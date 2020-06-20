@@ -41,49 +41,50 @@ if __name__=='__main__':
     """
     parser = argparse.ArgumentParser(description=desc,
                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-m", "--model", required=True, type=str, 
-                        help=" ")
+    parser.add_argument("-m", "--model", required=True, type=str,
+                        choices=[True, False], 
+                        help="CNN model used for the learning.")
     parser.add_argument("-ag", "--augment", type=ast.literal_eval, 
                         choices=[True, False], default=False,
-                        help=" ")
+                        help="If True, data augmentation is applied")
     parser.add_argument("-nc", "--ncpus", type=int, default=None,
-                        help=" ")                                           
+                        help="If specified, multiprocessing with 'nproc' processes are used for data acquisition. This could be necessary when data are not augmented.")                                           
     parser.add_argument("-r", "--dprate", default=0.25, type=float, 
-                        help=" ")
+                        help="Rate of the dropout layers")
     parser.add_argument("-mf", "--minf", default=4, type=int, 
-                        help=" ")                    
+                        help="Minimum number of filter in convolutional layers")                    
     parser.add_argument("-s", "--shape", default=None, type=tuple,
-                        help= " ")
+                        help= "If not None, the images are resized at 'shape' value")
     parser.add_argument("-id", "--inputdir", type=str, default='data', 
-                        help=" ")  
+                        help="Number of directory in 'brakingws/datamanage/' folder in which the data are contained")  
     parser.add_argument("-df", "--dframe", type=str, default=None, 
-                        help=" ")                                                             
+                        help="If you want to select the images, name of the cvs file, contained in 'inputdir', containing the list of images that have been selected.")                                                             
     parser.add_argument("-b", "--batch", type=int, default=32, 
-                        help=" ") 
+                        help="Batch size of the training and validation set") 
     parser.add_argument("-e", "--epochs", type=int, default=10, 
-                        help=" ")                                        
+                        help="Number of epochs of the run")                                        
     parser.add_argument("-wc", "--wisecenter", type=ast.literal_eval, 
                         choices=[True, False], default=False, 
-                        help=" ")
+                        help="If True, augmentation divides the images by the mean over the test set")
     parser.add_argument("-zr", "--zoomrange", type=float, default=0.05, 
-                        help=" ")  
+                        help="Zoon range on the augmentatio")  
     parser.add_argument("-ws", "--widthshift", type=int, default=10, 
-                        help=" ")
+                        help="Width shift of the augmentation")
     parser.add_argument("-hs", "--heightshift", type=int, default=10, 
-                        help=" ")
+                        help="Height shift if the augmentation")
     parser.add_argument("-vs", "--validsplit", type=float, default=0.5, 
-                        help=" ") 
+                        help="Fraction on data used for the validation") 
     parser.add_argument("-sm", "--savemodel", type=ast.literal_eval, 
                         choices=[True, False], default=False, 
-                        help=" ")
+                        help="If True, model weights are saved in 'brakingws/datamanage/<outputname>'")
     parser.add_argument("-sp", "--savepreds", type=ast.literal_eval, 
                         choices=[True, False], default=False, 
-                        help=" ")  
+                        help="If True, percentile of well predicted images are saved in 'brakingws/datamanage/<outputname>'")  
     parser.add_argument("-sf", "--savefig", type=ast.literal_eval, 
                         choices=[True, False], default=False, 
-                        help=" ")                      
+                        help="If True, the plots of training and validation performance will be saved in 'brakingws/datamanage/<outputname>'")                      
     parser.add_argument("-os", "--outputname", type=str, default='results',
-                        help="")         
+                        help="Folder at which the results of this run will be saved")         
                                                                                      
 
     options = parser.parse_args()
