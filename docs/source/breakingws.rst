@@ -3,17 +3,18 @@
 Modules
 =======
 
-The “glitcha” model
--------------------
-   
-.. automodule:: breakingws.cnn.glitcha
-   :members: 
-
 The “imma” model
 ----------------
 
 .. automodule:: breakingws.cnn.imma
-   :members:    
+   :members:   
+   
+
+The “glitcha” model
+-------------------
+   
+The same of “imma”, but located in *breakingws.cnn.glitcha.glitcha_model*,
+containing a model a high number of layers (16), aimed to classify glitches.     
 
 Data Manager Modules
 --------------------
