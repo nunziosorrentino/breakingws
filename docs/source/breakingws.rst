@@ -14,7 +14,8 @@ The “glitcha” model
 -------------------
    
 The same of “imma”, but located in *breakingws.cnn.glitcha.glitcha_model*,
-containing a model a high number of layers (16), aimed to classify glitches.     
+containing a model with a high number of layers (16), 
+aimed to classify glitches.     
 
 Data Manager Modules
 --------------------
