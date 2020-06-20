@@ -1,16 +1,16 @@
 .. _api:
 
-Package
+Modules
 =======
 
-Submodules
-----------
-
-Models Functions
+The “imma” model
 ----------------
 
 .. automodule:: breakingws.cnn.imma
    :members:
+   
+The “glitcha” model
+-------------------
    
 .. automodule:: breakingws.cnn.glitcha
    :members:   
