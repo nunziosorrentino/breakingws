@@ -13,8 +13,7 @@ The “glitcha” model
 -------------------
    
 .. automodule:: breakingws.cnn.glitcha
-   :members:   
-    
+   :members:       
 
 Data Manager Modules
 --------------------

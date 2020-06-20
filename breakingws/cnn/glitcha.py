@@ -17,27 +17,7 @@ from tensorflow.keras.layers import Input,Dense,Dropout,Conv2D,\
 from tensorflow.keras.models import Model
 
 def glitcha_model(shape, classes=4, dprate=0.25, minfilts=16):
-    """Model with a high number of layers (16), aimed to classify glitches.
-    
-    Parameters
-    ----------
-    shape : tuple
-        Shape of the input images;
-
-    classes : int
-        Number of the model output values, corresponding to the total 
-        number of the classes. Eash number represents the probability to 
-        belong to that class;
-        
-    dprate : float
-        images rate used in Dropout layers, which randomly set input units 
-        to 0 with a frequency equal to *dprate* at each step during 
-        training time. This helps prevent overfitting; 
-        
-    minfilts : float
-        minimum number of filter used in 2D convolutional layers. Higher 
-        this number is, better the observation of details is;        
-    
+    """Model with a high number of layers (16), aimed to classify glitches.    
     """
 
 	inputs = Input(shape=shape) 
