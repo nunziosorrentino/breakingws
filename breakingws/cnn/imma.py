@@ -17,8 +17,7 @@ from tensorflow.keras.layers import Input,Dense,Dropout,Conv2D,\
 from tensorflow.keras.models import Model
 
 def imma_model(shape, classes=4, dprate=0.5, minfilts=4):
-    """Model with a low number of layers (12), aimed to classify 
-       low resolution images.
+    """Model with a low number of layers (12), aimed to classify low resolution images.
     
     Parameters
     ----------
