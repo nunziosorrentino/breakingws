@@ -6,6 +6,16 @@ Package
 Submodules
 ----------
 
+Models Functions
+----------------
+
+.. automodule:: breakingws.cnn.imma
+   :members:
+   
+.. automodule:: breakingws.cnn.glitcha
+   :members:   
+    
+
 Data Manager Modules
 --------------------
 

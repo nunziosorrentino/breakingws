@@ -18,11 +18,17 @@ Contents
 
    modules
    installation
+   howtouse
    breakingws
    
 Gravity Spy Dataset
 -------------------
    
 .. image:: figures/GravitySpy.png
+
+In this project, I studied spectrograms of glitches provided by GravitySpy, 
+encapsulating some classified data from the first observational run (O1)
+of the two LIGO inferferometers, which in september 2015 observed the first 
+gravitational signal ever detected.
 
 

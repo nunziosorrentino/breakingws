@@ -17,7 +17,29 @@ from tensorflow.keras.layers import Input,Dense,Dropout,Conv2D,\
 from tensorflow.keras.models import Model
 
 def imma_model(shape, classes=4, dprate=0.5, minfilts=4):
+    """Model with a low number of layers (12), aimed to classify 
+       low resolution images.
+    
+    Parameters
+    ----------
+    shape : tuple
+        Shape of the input images;
 
+    classes : int
+        Number of the model output values, corresponding to the total 
+        number of the classes. Eash number represents the probability to 
+        belong to that class;
+        
+    dprate : float
+        images rate used in Dropout layers, which randomly set input units 
+        to 0 with a frequency equal to *dprate* at each step during 
+        training time. This helps prevent overfitting; 
+        
+    minfilts : float
+        minimum number of filter used in 2D convolutional layers. Higher 
+        this number is, better the observation of details is; 
+    """
+        
     inputs = Input(shape=shape) 
 
     # Block 1
