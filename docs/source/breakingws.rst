@@ -3,17 +3,17 @@
 Modules
 =======
 
-The “imma” model
-----------------
-
-.. automodule:: breakingws.cnn.imma
-   :members:
-   
 The “glitcha” model
 -------------------
    
 .. automodule:: breakingws.cnn.glitcha
-   :members:       
+   :members:   
+
+The “imma” model
+----------------
+
+.. automodule:: breakingws.cnn.imma
+   :members:    
 
 Data Manager Modules
 --------------------
