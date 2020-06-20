@@ -6,8 +6,7 @@ Modules
 The “glitcha” model
 -------------------
    
-.. automodule:: breakingws.cnn.glitcha
-   :members:   
+.. autofunction:: breakingws.cnn.glitcha.glitcha_model   
 
 The “imma” model
 ----------------
