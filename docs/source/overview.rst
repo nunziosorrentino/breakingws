@@ -17,10 +17,14 @@ BreakinGWs provides two models for the CNN:
 
 These models can be used in this way: 
 
-.. command-output:: runcnn.py -m imma
+.. code-block:: bash
+   
+   $ runcnn.py -m imma
 
 or
 
-.. command-output:: runcnn.py -m glitcha
+.. code-block:: bash
+   
+   $ runcnn.py -m glitcha
 
-The options of these tools are explained in the **how to use** guide.s
+The options of these tools are explained in the **how to use** guide.

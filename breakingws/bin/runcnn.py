@@ -113,15 +113,15 @@ if __name__=='__main__':
     path_to_dataset = os.path.join('..', 'datamanage', inputdir) 
 
     if augment:
-        assert(shape is not None)
-        shape = (shape[0], shape[1], 3)
-        resize = (shape[0], shape[1])
+        resize = shape
+        if shape is not None:
+            shape = (shape[0], shape[1], 3)
         image_generator = ImageDataGenerator(samplewise_center=wise_center,
                                              zoom_range=zoom_range,
 		    					             width_shift_range=wshift,
     	    					             height_shift_range=hshift,
     	    					             validation_split=vsplit,
-                                             )  
+                                             )                                     
         if dframe is not None:
             path_to_dataframe = os.path.join(path_to_dataset, dframe)
         else:
@@ -133,7 +133,11 @@ if __name__=='__main__':
                                                dataframe=path_to_dataframe, 
                                                resize=resize, 
                                                batch_size=batch
-		    		                           )
+             		                           )
+        if shape is None:
+            single_batch = t_gen.next()
+            single_image = single_batch[0].astype('uint8')
+            shape = single_imahe.shape   
         classes = len(t_gen.class_indices)
                 
         model = cnn_models[model_name](shape, classes, dprate, minf)

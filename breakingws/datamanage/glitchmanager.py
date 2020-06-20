@@ -22,7 +22,8 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
  
 #resize=(483, 578) 
 
-def glts_augment_generator(inputpath, datagen=ImageDataGenerator(), 
+def glts_augment_generator(inputpath, 
+                         datagen=ImageDataGenerator(validation_split=0.25), 
                            dataframe=None, resize=None, seed=1,
                            batch_size=32, class_mode='categorical'):
     """
@@ -38,8 +39,8 @@ def glts_augment_generator(inputpath, datagen=ImageDataGenerator(),
     datagen : `~tf.keras.preprocessing.image.ImageDataGenerator`
         Generator instance of keras images processing utilities, 
         containing glitches-indipendent image transformations that you 
-        want to apply. If *ImageDataGenerator()* (deafult value) is given, 
-        no data augmentation is imposed.
+        want to apply. If *ImageDataGenerator(validation_split=0.25)* 
+        (deafult value) is given, no data augmentation is imposed.
         
     dataframe : str
         Path to the *csv* file containing which images must be 
