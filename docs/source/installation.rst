@@ -26,6 +26,8 @@ Then verifies that it is Python3.6!
 
 Create and set the environment
 ------------------------------
+Once cloned the BreakinGWs repository from GitHub, follows these steps in
+order to set the correct environment for the tools usage.
 
 First of all, let's move to the package location:
 
