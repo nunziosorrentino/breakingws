@@ -29,7 +29,7 @@ or
    $ runcnn.py -m glitcha
 
 The options of these tools are explained in the :ref:`how to use <howtouse>`
-guide.
+guide. The methods of the package are documented :ref:`here <breakingws>`.
 
 .. warning::
     These tools works well just if launched from *breakingws/bin* directory.

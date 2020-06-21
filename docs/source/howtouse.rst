@@ -61,7 +61,7 @@ The CNN application to glitches provided by GravitySpy requires more
 precautions. The data are not evenly distributed between the 20 labeled
 classes, and the images have got many details and sometimes some external
 noise. In order to consider these peculiarities, BreakinGWs provides a more
-complex model *glitcha* and the possibility to make **data augmentation**. 
+complex model :ref:`glitcha <overview>` and the possibility to make **data augmentation**. 
 The samples are increased with trasformations that are invariant for the 
 solutions we look for. In the GravitySpy data set case, 
 there are three different invariant transformations for glitches:

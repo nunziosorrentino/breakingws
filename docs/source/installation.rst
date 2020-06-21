@@ -26,7 +26,7 @@ your GNU/Linux distribution) and then check out your Python version through:
 Then verifies that it is Python3.6!
 
 
-Create and set the environment
+Create and Set the Environment
 ------------------------------
 Once cloned the BreakinGWs repository from GitHub, follows these steps in
 order to set the correct environment for the tools usage.

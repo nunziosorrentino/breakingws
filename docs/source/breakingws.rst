@@ -12,10 +12,6 @@ The “imma” Model
 
 The “glitcha” Model
 -------------------
-   
-The same of “imma”, but located in *breakingws.cnn.glitcha.glitcha_model*,
-containing a model with a high number of layers (16), 
-aimed to classify glitches. 
 
 .. automodule:: breakingws.cnn.glitcha
    :members:     
