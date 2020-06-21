@@ -69,13 +69,13 @@ there are three different invariant transformations for glitches:
 * ``samplewise center``: the images mean value (done along the test set) is set to zero;
 * ``zoom range``: range for random zoom;
 * ``width shift range``: number of horizontal pixels for random shift;
-* ``heigh tshift``: number of vertical pixels for random shift;
+* ``height shift``: number of vertical pixels for random shift;
 
 Data augmentation can be done with *runcnn.py* with *-a* option:
 
 .. code-block:: bash
 
-    $ runcnn.py -m glitcha -wc True -zr 0.05 -ws 10 -hs 10 ...
+    $ runcnn.py -m glitcha -a True -wc True -zr 0.05 -ws 10 -hs 10 ...
 
 This is the good starting point for  glitches classification. 
 
