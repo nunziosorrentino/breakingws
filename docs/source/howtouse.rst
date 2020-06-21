@@ -44,7 +44,7 @@ the learning.
 
     $ runcnn.py -m imma -id data -vs 0.25 -mf 4 -r 0.5 -b 64 -e 150
     
-At the end of the run, two graphs will be showed:
+At the end of the run, two graphs will be shown:
 
 .. image:: figures/imma_loss.png
 
@@ -61,5 +61,5 @@ The CNN application to glitches provided by GravitySpy requires more
 precautions. The data are not evenly distributed between the 20 labeled
 classes and the images have got many details. and sometimes some external
 noise. In order to consider these peculiarities, BreakinGWs provides a more
-complex model *glitcha* and the possibility of make **data augmentation**.
+complex model *glitcha* and the possibility to make **data augmentation**.
 
