@@ -9,13 +9,15 @@ order to properly use the package tools.
 Prerequisites
 -------------
 
-BreakinGWs package is based on the Python3.6_ scripting language. In order 
-to correcly use its capabilities, make sure your Python version has been
-properly installed. Anyway you can find your prefered installation mode 
-(e.g., the Python installation provided by your GNU/Linux distribution), 
-then check out your Python version through:
+BreakinGWs package is based on the Python3.6_ scripting language and Keras_
+machine learning tools. In order to correcly use its capabilities, make 
+sure your Python version has been properly installed. Anyway you can find 
+your prefered installation mode (e.g., the Python installation provided by 
+your GNU/Linux distribution) and then check out your Python version through:
 
 .. _Python3.6: https://www.python.org/downloads/release/python-360/
+
+.. _Keras: https://keras.io/api/
 
 .. code-block:: bash
 

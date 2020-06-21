@@ -57,4 +57,9 @@ it means that the CNN is doing a good job. The test results are saved in a
 Data Augmentation with Glitches Data
 ------------------------------------
 
+The CNN application to glitches provided by GravitySpy requires more 
+precautions. The data are not evenly distributed between the 20 labeled
+classes and the images have got many details. and sometimes some external
+noise. In order to consider these peculiarities, BreakinGWs provides a more
+complex model *glitcha* and the possibility of make **data augmentation**.
 
