@@ -3,8 +3,8 @@
 Overview
 ========
 
-The tools provided by BreakinGWs can generate simple images data
-sets (circles, rectangles, ellipses and lines), in order to start using it
+The tools provided by BreakinGWs can generate simple images sets 
+(circles, rectangles, ellipses and lines), in order to start using it
 with the proposed CNN algorithms:
 
 * ``genimages.py``: produce a set of images in *breakingws/datamange/data* folder;
@@ -32,5 +32,5 @@ The options of these tools are explained in the :ref:`how to use <howtouse>`
 guide. The methods of the package are documented :ref:`here <api>`.
 
 .. warning::
-    These tools works well just if launched from *breakingws/bin* directory.
+    These tools work well just if launched from *breakingws/bin* directory.
     This bug will be fixed in next versions!
