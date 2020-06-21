@@ -39,36 +39,36 @@ def glitcha_model(shape, classes=4, dprate=0.25, minfilts=16):
         minimum number of filter used in 2D convolutional layers. Higher 
         this number is, better the observation of details is; 
     """
-	inputs = Input(shape=shape) 
-
-	# Block 1
-	hidden = Conv2D(minfilts,(3,3), activation='relu')(inputs) 
-	hidden = Conv2D(minfilts*2,(3,3), activation='relu')(hidden) 
-	hidden = MaxPooling2D((2,2))(hidden)
-	hidden = Dropout(dprate)(hidden) 
-	# Block 2
-	hidden = Conv2D(minfilts*4,(3,3), activation='relu')(hidden) 
-	hidden = MaxPooling2D((2,2))(hidden)  
-	hidden = Conv2D(minfilts*4,(3,3), activation='relu')(hidden) 
-	hidden = MaxPooling2D((2,2))(hidden)
-	hidden = Dropout(dprate)(hidden) 
-
-	# Block 3 
-	hidden = Conv2D(minfilts*8,(3,3), activation='relu')(hidden)
-	hidden = MaxPooling2D((2,2))(hidden)
-	hidden = Conv2D(minfilts*8,(3,3), activation='relu')(hidden) 
-	hidden = MaxPooling2D((2,2))(hidden)
-	hidden = Dropout(dprate)(hidden)
-
-	# Block 4
-	hidden = Flatten()(hidden)
-	hidden = Dense(minfilts*8*4, activation='relu')(hidden) 
-	hidden = Dropout(dprate)(hidden) 
+    inputs = Input(shape=shape) 
+    
+    # Block 1
+    hidden = Conv2D(minfilts,(3,3), activation='relu')(inputs) 
+    hidden = Conv2D(minfilts*2,(3,3), activation='relu')(hidden) 
+    hidden = MaxPooling2D((2,2))(hidden)
+    hidden = Dropout(dprate)(hidden) 
+    # Block 2
+    hidden = Conv2D(minfilts*4,(3,3), activation='relu')(hidden) 
+    hidden = MaxPooling2D((2,2))(hidden)  
+    hidden = Conv2D(minfilts*4,(3,3), activation='relu')(hidden) 
+    hidden = MaxPooling2D((2,2))(hidden)
+    hidden = Dropout(dprate)(hidden) 
+    
+    # Block 3 
+    hidden = Conv2D(minfilts*8,(3,3), activation='relu')(hidden)
+    hidden = MaxPooling2D((2,2))(hidden)
+    hidden = Conv2D(minfilts*8,(3,3), activation='relu')(hidden) 
+    hidden = MaxPooling2D((2,2))(hidden)
+    hidden = Dropout(dprate)(hidden)
     
     # Block 4
-	outputs = Dense(classes, activation='softmax')(hidden) 
-	# 'softmax' is more efficient for multiclass
-	model = Model(inputs=inputs, outputs=outputs)
-	model.compile(loss='categorical_crossentropy', optimizer='adam',
+    hidden = Flatten()(hidden)
+    hidden = Dense(minfilts*8*4, activation='relu')(hidden) 
+    hidden = Dropout(dprate)(hidden) 
+    
+    # Block 4
+    outputs = Dense(classes, activation='softmax')(hidden) 
+    # 'softmax' is more efficient for multiclass
+    model = Model(inputs=inputs, outputs=outputs)
+    model.compile(loss='categorical_crossentropy', optimizer='adam',
                       metrics=['accuracy'])
-	return model
+    return model

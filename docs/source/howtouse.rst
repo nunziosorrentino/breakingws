@@ -59,7 +59,29 @@ Data Augmentation with Glitches Data
 
 The CNN application to glitches provided by GravitySpy requires more 
 precautions. The data are not evenly distributed between the 20 labeled
-classes and the images have got many details. and sometimes some external
+classes, and the images have got many details and sometimes some external
 noise. In order to consider these peculiarities, BreakinGWs provides a more
-complex model *glitcha* and the possibility to make **data augmentation**.
+complex model *glitcha* and the possibility to make **data augmentation**. 
+The samples are increased with trasformations that are invariant for the 
+solutions we look for. In the GravitySpy data set case, 
+there are three different invariant transformations for glitches:
 
+* ``samplewise center``: the images mean value (done along the test set) is set to zero;
+* ``zoom range``: range for random zoom;
+* ``width shift range``: number of horizontal pixels for random shift;
+* ``heigh tshift``: number of vertical pixels for random shift;
+
+Data augmentation can be done with *runcnn.py* with *-a* option:
+
+.. code-block:: bash
+
+    $ runcnn.py -m glitcha -wc True -zr 0.05 -ws 10 -hs 10 ...
+
+This is the good starting point for  glitches classification. 
+
+For more information about *runcnn.py*, type:
+
+.. code-block:: bash
+
+    $ runcnn.py -h
+    
