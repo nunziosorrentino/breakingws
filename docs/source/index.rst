@@ -26,9 +26,10 @@ Gravity Spy Dataset
    
 .. image:: figures/GravitySpy.png
 
-In this project, I studied spectrograms of glitches provided by GravitySpy, 
+In this project, I studied spectrograms of glitches provided by GravitySpy_, 
 encapsulating some classified data from the first observational run (O1)
 of the two LIGO inferferometers, which in september 2015 observed the first 
 gravitational signal ever detected.
 
+.. _GravitySpy: https://www.zooniverse.org/projects/zooniverse/gravity-spy
 
