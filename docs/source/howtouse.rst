@@ -80,13 +80,13 @@ there are three different invariant transformations for glitches:
 * ``width shift range``: number of horizontal pixels for random shift;
 * ``height shift``: number of vertical pixels for random shift;
 
-Data augmentation can be done with *runcnn.py* with *-a* option:
+Data augmentation can be done with *runcnn.py* with ``-ag`` option:
 
 .. code-block:: bash
 
     $ runcnn.py -m glitcha -ag True -wc True -zr 0.05 -ws 10 -hs 10 ...
 
-This is the good starting point for  glitches classification. 
+This is the good starting point for glitches classification. 
 
 For more information about *runcnn.py*, type:
 
