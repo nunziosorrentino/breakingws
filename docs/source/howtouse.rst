@@ -28,9 +28,18 @@ Go the the *breakingws/bin/* and write:
 
     $ runcnn.py -m imma -id data -vs 0.25
     
+.. note::
+    *runcnn.py* tool allows you to fully exploit multiple processors on a 
+    given machine during the data loading (very usefull for large number of 
+    images). If you have, for example, 4 processors, just add ``-np`` option: 
+   
+    .. code-block:: bash
+
+        $ runcnn.py -m imma -id data -vs 0.25 -np 4  
+    
 Now we can change some parameters of the model in order to optimize the
 learning. The minimum number of filters used in a single convolutional layer 
-and the *rate* parameter of the dropout layers can be set as follows:
+and the *rate* parameter of the dropout layers can be set in this way:
 
 .. code-block:: bash
 
@@ -75,7 +84,7 @@ Data augmentation can be done with *runcnn.py* with *-a* option:
 
 .. code-block:: bash
 
-    $ runcnn.py -m glitcha -a True -wc True -zr 0.05 -ws 10 -hs 10 ...
+    $ runcnn.py -m glitcha -ag True -wc True -zr 0.05 -ws 10 -hs 10 ...
 
 This is the good starting point for  glitches classification. 
 
