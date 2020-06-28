@@ -16,8 +16,8 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   modules
    installation
+   modules
    howtouse
    breakingws
    

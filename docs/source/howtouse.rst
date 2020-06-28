@@ -71,9 +71,9 @@ precautions. The data are not evenly distributed between the 20 labeled
 classes, and the images have got many details and sometimes some external
 noise. In order to consider these peculiarities, BreakinGWs provides a more
 complex model :ref:`glitcha <overview>` and the possibility to make **data augmentation**. 
-The samples are increased with trasformations that are invariant for the 
+Here we apply to samples some random transformations, which are invariant for the 
 solutions we look for. In the GravitySpy data set case, 
-there are three different invariant transformations for glitches:
+there are three different invariant transformations for the glitches:
 
 * ``samplewise center``: the images mean value (done along the test set) is set to zero;
 * ``zoom range``: range for random zoom;
