@@ -1,5 +1,5 @@
 # BreakinGWs
-project for the *cmepda* course of the University of Pisa, voted to develop an efficient convolutuonal neural network for the study of the rapid noise artifacts (i.e. glitches) in gravitational waves detectors. This file shows you the most important things to do before using the package. If you have problems or doubts after reading this README, please visit the documentation by typing below on the status flag. 
+project for the *cmepda* course of the University of Pisa, voted to develop an efficient convolutuonal neural network for the study of the rapid noise artifacts (i.e. glitches) in gravitational waves detectors. This file shows the most important things to do before using the package. If you have problems or doubts after reading this README, please visit the documentation by typing below on the status flag. 
 
 **Package build status**
 [![Build Status](https://travis-ci.org/nunziosorrentino/breakingws.svg?branch=master)](https://travis-ci.com/nunziosorrentino/breakingws)
