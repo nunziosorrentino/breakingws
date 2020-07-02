@@ -138,11 +138,10 @@ class ImagesManager:
     def _pool_handler(iterable, nproc=1):
         """
         """
-        if __name__=='__main__':
-            print('Starting', nproc, 'processes for data acquisition!')
-            with mp.Pool(processes=nproc) as proc:
-                results = proc.map(ImagesManager._create_images_dict, 
-                                   iterable)
+        print('Starting', nproc, 'processes for data acquisition!')
+        with mp.Pool(processes=nproc) as proc:
+            results = proc.map(ImagesManager._create_images_dict, 
+                               iterable)
         return results
     
     @classmethod    
@@ -159,7 +158,7 @@ class ImagesManager:
         if nproc is None:
             dict_images = cls._create_images_dict(p_path_gen)
             
-        else:
+        if nproc is not None: 
             n_files = len(p_path_gen)
             splits_list = [n_files//nproc*(i+1) for i in range(nproc-1)]
             proc_iterable = np.split(p_path_gen, splits_list)

@@ -42,7 +42,6 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(description=desc,
                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("-m", "--model", required=True, type=str,
-                        choices=[True, False], 
                         help="CNN model used for the learning.")
     parser.add_argument("-ag", "--augment", type=ast.literal_eval, 
                         choices=[True, False], default=False,
