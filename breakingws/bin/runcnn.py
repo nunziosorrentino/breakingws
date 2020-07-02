@@ -46,8 +46,8 @@ if __name__=='__main__':
     parser.add_argument("-ag", "--augment", type=ast.literal_eval, 
                         choices=[True, False], default=False,
                         help="If True, data augmentation is applied")
-    parser.add_argument("-nc", "--ncpus", type=int, default=None,
-                        help="If specified, multiprocessing with 'nproc' processes are used for data acquisition. This could be necessary when data are not augmented.")                                           
+    parser.add_argument("-np", "--nprocs", type=int, default=None,
+                        help="If specified, multiprocessing with 'nprocs' processes are used for data acquisition. This could be necessary when data are not augmented.")                                           
     parser.add_argument("-r", "--dprate", default=0.25, type=float, 
                         help="Rate of the dropout layers")
     parser.add_argument("-mf", "--minf", default=4, type=int, 
@@ -91,7 +91,7 @@ if __name__=='__main__':
     # Import arguments from parser
     model_name = options.model
     augment = options.augment
-    ncpus = options.ncpus
+    nprocs = options.nprocs
     dprate = options.dprate
     minf = options.minf
     shape = options.shape
@@ -154,7 +154,7 @@ if __name__=='__main__':
         pred = model.predict(p_gen, steps=p_gen.n, verbose=1)
     
     if not augment:
-        im_manager = ImagesManager.from_directory(path_to_dataset, ncpus) 
+        im_manager = ImagesManager.from_directory(path_to_dataset, nprocs) 
         t_dl, v_dl, p_dl = im_manager.get_partial(vsplit)
         classes = len(im_manager.images_ids)
         shape = im_manager.shape[1:]
