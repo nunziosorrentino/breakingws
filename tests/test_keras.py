@@ -38,7 +38,7 @@ class TestKerasInstallation(unittest.TestCase):
     def test_keras_version(self):
         """Unit test that verifies that keras is a tensorflow module.
         """
-        self.assertIn('tf', k_vers,
+        self.assertIn(k_vers, '2.4.0',
             msg='Keras {} properly imported from tensorflow {}.'.format(k_vers, tf_vers))
 
 if __name__ == '__main__':
